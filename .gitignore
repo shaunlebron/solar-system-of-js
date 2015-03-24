@@ -1,0 +1,16 @@
+pom.xml
+*jar
+/lib/
+/classes/
+/out/
+/target/
+.lein-deps-sum
+.lein-repl-history
+.lein-plugins/
+figwheel_server.log
+
+resources/public/js/out
+resources/public/js/out-adv
+resources/public/js/*.js
+
+*.swp
