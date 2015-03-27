@@ -12,7 +12,8 @@
 ;;--------------------------------------------------------------------------------
 
 (def initial-state
-  {:cam {:x 0
+  {:slide 0
+   :cam {:x 0
          :y 0
          :zoom 1
          :angle 0}
@@ -175,14 +176,6 @@
 ;; Slide Animations
 ;;--------------------------------------------------------------------------------
 
-(defn init-slide1!
-  []
-  (swap! state assoc :js-face {:x 900
-                               :y 0
-                               :r 200
-                               :alpha 1})
-  )
-
 (defn go-go-slide1!
   []
   (go
@@ -195,6 +188,59 @@
           #(swap! state assoc-in [:js-face :x] %)))))
 
 ;;--------------------------------------------------------------------------------
+;; Slide Control
+;;--------------------------------------------------------------------------------
+
+(def slide-actions
+  [nil
+   go-go-slide1!
+   ])
+
+(def num-slides (count slide-actions))
+
+(defonce slide-states (atom []))
+
+(defn save-slide-state!
+  []
+  (let [i (:slide @state)]
+    (swap! slide-states assoc i @state)))
+
+(defn next-slide!
+  []
+  ;; FIXME: prevent going to next slide until animation is done
+  (when-let [action (get slide-actions (inc (:slide @state)))]
+    (save-slide-state!)
+    (swap! state update-in [:slide] inc)
+    (action)))
+
+(defn prev-slide!
+  []
+  (when-let [s (get @slide-states (dec (:slide @state)))]
+    (reset! state s)))
+
+(def key-names
+  {37 :left
+   38 :up
+   39 :right
+   40 :down
+   32 :space})
+
+(def key-name #(-> % .-keyCode key-names))
+
+(defn key-down [e]
+  (let [kname (key-name e)
+        shift (.-shiftKey e)]
+    (case kname
+      :left  (do
+               (prev-slide!)
+               (.preventDefault e))
+      :right (do
+               (next-slide!)
+               (.preventDefault e))
+      nil)))
+
+
+;;--------------------------------------------------------------------------------
 ;; Entry
 ;;--------------------------------------------------------------------------------
 
@@ -202,11 +248,9 @@
   []
   (init-canvas!)
   (.requestAnimationFrame js/window tick!)
-  (go
-    (init-slide1!)
-    (<! (timeout 500))
-    (go-go-slide1!))
-  )
+  (.addEventListener js/window "keydown" key-down)
+
+  (save-slide-state!))
 
 (.addEventListener js/window "load" main)
 
