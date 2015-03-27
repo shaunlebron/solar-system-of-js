@@ -172,6 +172,13 @@
           (recur t)))
       (untap tick-tap c))))
 
+(defn multi-animate!
+  [opts callbacks]
+  (let [anims (mapv animate! opts callbacks)]
+    (go
+      (doseq [a anims]
+        (<! a)))))
+
 ;;--------------------------------------------------------------------------------
 ;; Slide Animations
 ;;--------------------------------------------------------------------------------
@@ -179,13 +186,11 @@
 (defn go-go-slide1!
   []
   (go
-    (<! (animate!
-          {:a 0 :b 1 :duration 1}
-          #(swap! state assoc-in [:js-face :alpha] %))))
-  (go
-    (<! (animate!
-          {:a 900 :b 0 :duration 1}
-          #(swap! state assoc-in [:js-face :x] %)))))
+    (<! (multi-animate!
+          [{:a 0 :b 1 :duration 1}
+           {:a 900 :b 0 :duration 1}]
+          [#(swap! state assoc-in [:js-face :alpha] %)
+           #(swap! state assoc-in [:js-face :x] %)]))))
 
 ;;--------------------------------------------------------------------------------
 ;; Slide Control
