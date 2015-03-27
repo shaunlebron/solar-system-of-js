@@ -210,18 +210,24 @@
   (let [i (:slide @state)]
     (swap! slide-states assoc i @state)))
 
+(def in-transition? (atom false))
+
 (defn next-slide!
   []
-  ;; FIXME: prevent going to next slide until animation is done
-  (when-let [action (get slide-actions (inc (:slide @state)))]
-    (save-slide-state!)
-    (swap! state update-in [:slide] inc)
-    (action)))
+  (when-not @in-transition?
+    (when-let [action (get slide-actions (inc (:slide @state)))]
+      (save-slide-state!)
+      (swap! state update-in [:slide] inc)
+      (reset! in-transition? true)
+      (go
+        (<! (action))
+        (reset! in-transition? false)))))
 
 (defn prev-slide!
   []
-  (when-let [s (get @slide-states (dec (:slide @state)))]
-    (reset! state s)))
+  (when-not @in-transition?
+    (when-let [s (get @slide-states (dec (:slide @state)))]
+      (reset! state s))))
 
 (def key-names
   {37 :left
