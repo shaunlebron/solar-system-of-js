@@ -14,6 +14,9 @@
 (def initial-state
   "Initial state of the application."
   {:slide 0
+   :title {:x 0
+           :y 0
+           :alpha 1}
    :cam {:x 0
          :y 0
          :zoom 1
@@ -80,8 +83,21 @@
 (defn text-baseline! [x] (aset ctx "textBaseline" x))
 
 ;;--------------------------------------------------------------------------------
-;; Slide 1
+;; Slide Drawings
 ;;--------------------------------------------------------------------------------
+
+
+(defn draw-title!
+  [{:keys [x y alpha]}]
+  (save!)
+  (global-alpha! alpha)
+  (font! "100 100px Roboto")
+  (text-align! "center")
+  (text-baseline! "middle")
+  (fill-style! "#555")
+  (fill-text! "Solar System of JS" x y)
+  (restore!)
+  )
 
 (defn draw-js!
   [{:keys [x y r alpha]}]
@@ -121,6 +137,7 @@
   (fill-rect! 0 0 width height)
   (set-cam! (:cam @state))
 
+  (draw-title! (:title @state))
   (draw-js! (:js-face @state))
 
   (restore!))
@@ -213,7 +230,10 @@
           [{:a 0 :b 1 :duration 1}
            #(swap! state assoc-in [:js-face :alpha] %)
            {:a 900 :b 0 :duration 1}
-           #(swap! state assoc-in [:js-face :x] %)]))))
+           #(swap! state assoc-in [:js-face :x] %)
+           {:a 1 :b 0 :duration 0.4}
+           #(swap! state assoc-in [:title :alpha] %)
+           ]))))
 
 ;;--------------------------------------------------------------------------------
 ;; Slide Control
