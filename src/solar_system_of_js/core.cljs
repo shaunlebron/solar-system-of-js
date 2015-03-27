@@ -124,18 +124,39 @@
 
   (restore!))
 
+(def core-layers
+  "colors of js-core layers"
+  [{:name "ES3"
+    :color "#DDD"
+    }
+   {:name "ES5"
+    :color "#BBB"
+    }
+   {:name "ES6"
+    :color "#999"
+    }
+   {:name "ES7"
+    :color "#777"
+    }
+   {:name "ES8"
+    :color "#555"
+    }
+   ])
+
 (defn draw-js-core!
   [{:keys [x y r alpha]}]
   (save!)
   (global-alpha! alpha)
-  (stroke-style! "#222")
-  (doseq [[i label] (reverse (map-indexed vector ["ES3" "ES5" "ES6" "ES7" "ES8"]))]
-    (let [cr (* (inc i) (/ r 5))]
+  (stroke-style! "#EEE")
+  (doseq [[i layer] (reverse (map-indexed vector core-layers))]
+    (let [cr (* (inc i) (/ r (count core-layers)))]
       (circle! x y cr)
-      (line-width! 10)
-      (stroke!)
-      (fill-style! "#f7df1e")
+      (fill-style! (:color layer))
       (fill!)))
+  (circle! x y r)
+  (stroke-style! "#f7df1e")
+  (line-width! 10)
+  (stroke!)
   (restore!)
   )
 
@@ -271,7 +292,7 @@
           #(swap! state assoc-in [:js-face :alpha] %)
           {:a 0 :b 1 :duration 1}
           #(swap! state assoc-in [:js-core :alpha] %)
-          {:a 1 :b 1.5 :duration 1}
+          {:a 1 :b 2 :duration 2}
           #(swap! state assoc-in [:cam :zoom] %)
           ))))
 
