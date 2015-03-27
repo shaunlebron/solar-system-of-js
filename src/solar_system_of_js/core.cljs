@@ -24,7 +24,13 @@
    :js-face {:x 900 
              :y 0
              :r 200
-             :alpha 1}})
+             :alpha 1
+             :angle 0}
+   :js-core {:x 0
+             :y 0
+             :r 200
+             :alpha 0}
+   })
 
 ;; Current state of the application.
 (defonce state
@@ -81,11 +87,11 @@
 (defn stroke-text! [text x y] (.strokeText ctx text x y))
 (defn text-align! [x] (aset ctx "textAlign" x))
 (defn text-baseline! [x] (aset ctx "textBaseline" x))
+(defn line-width! [x] (aset ctx "lineWidth" x))
 
 ;;--------------------------------------------------------------------------------
 ;; Slide Drawings
 ;;--------------------------------------------------------------------------------
-
 
 (defn draw-title!
   [{:keys [x y alpha]}]
@@ -99,12 +105,13 @@
   (restore!)
   )
 
-(defn draw-js!
-  [{:keys [x y r alpha]}]
-
+(defn draw-js-face!
+  [{:keys [x y r angle alpha]}]
   (save!)
   (global-alpha! alpha)
-  (circle! x y r)
+  (translate! x y)
+  (rotate! angle)
+  (circle! 0 0 r)
   (fill-style! "#f7df1e")
   (fill!)
 
@@ -113,9 +120,25 @@
   (text-baseline! "middle")
   (fill-style! "#222")
   (let [off 60]
-    (fill-text! "JS" (+ x off) (+ y off)))
+    (fill-text! "JS" off off))
 
   (restore!))
+
+(defn draw-js-core!
+  [{:keys [x y r alpha]}]
+  (save!)
+  (global-alpha! alpha)
+  (stroke-style! "#222")
+  (doseq [[i label] (reverse (map-indexed vector ["ES3" "ES5" "ES6" "ES7" "ES8"]))]
+    (let [cr (* (inc i) (/ r 5))]
+      (circle! x y cr)
+      (line-width! 10)
+      (stroke!)
+      (fill-style! "#f7df1e")
+      (fill!)))
+  (restore!)
+  )
+
 
 ;;--------------------------------------------------------------------------------
 ;; Drawing
@@ -138,7 +161,8 @@
   (set-cam! (:cam @state))
 
   (draw-title! (:title @state))
-  (draw-js! (:js-face @state))
+  (draw-js-core! (:js-core @state))
+  (draw-js-face! (:js-face @state))
 
   (restore!))
 
@@ -212,7 +236,7 @@
 (defn multi-animate!
   "Helper for concurrent animations with `animate!`.
    Returns a channel that closes when all are done."
-  [arg-pairs]
+  [& arg-pairs]
   (let [anims (->> (partition 2 arg-pairs)
                    (mapv #(apply animate! %)))]
     (go
@@ -227,13 +251,29 @@
   []
   (go
     (<! (multi-animate!
-          [{:a 0 :b 1 :duration 1}
-           #(swap! state assoc-in [:js-face :alpha] %)
-           {:a 900 :b 0 :duration 1}
+          {:a 900 :b 0 :duration 1}
            #(swap! state assoc-in [:js-face :x] %)
            {:a 1 :b 0 :duration 0.4}
            #(swap! state assoc-in [:title :alpha] %)
-           ]))))
+           ))))
+
+(defn go-go-slide2!
+  []
+  (go
+    (<! (multi-animate!
+          {:a 0 :b -600 :duration 2}
+          #(swap! state assoc-in [:js-face :y] %)
+          {:a 0 :b 600 :duration 2}
+          #(swap! state assoc-in [:js-face :x] %)
+          {:a 0 :b (* 2 PI) :duration 2}
+          #(swap! state assoc-in [:js-face :angle] %)
+          {:a 1 :b 0 :duration 2}
+          #(swap! state assoc-in [:js-face :alpha] %)
+          {:a 0 :b 1 :duration 1}
+          #(swap! state assoc-in [:js-core :alpha] %)
+          {:a 1 :b 1.5 :duration 1}
+          #(swap! state assoc-in [:cam :zoom] %)
+          ))))
 
 ;;--------------------------------------------------------------------------------
 ;; Slide Control
@@ -243,6 +283,7 @@
   "Actions to take for each slide."
   [nil
    go-go-slide1!
+   go-go-slide2!
    ])
 
 (def num-slides
