@@ -12,6 +12,7 @@
 ;;--------------------------------------------------------------------------------
 
 (def initial-state
+  "Initial state of the application."
   {:slide 0
    :cam {:x 0
          :y 0
@@ -20,17 +21,19 @@
    :js-face {:x 900 
              :y 0
              :r 200
-             :alpha 1}
-   })
+             :alpha 1}})
 
-(defonce state (atom initial-state))
+;; Current state of the application.
+(defonce state
+  (atom initial-state))
 
 ;;--------------------------------------------------------------------------------
 ;; Math
 ;;--------------------------------------------------------------------------------
 
-(def PI (.-PI js/Math))
-(def cos (.-cos js/Math))
+(def PI  (aget js/Math "PI"))
+(def cos (aget js/Math "cos"))
+(def sin (aget js/Math "sin"))
 
 ;;--------------------------------------------------------------------------------
 ;; Canvas
@@ -47,9 +50,10 @@
   (set! canvas (.getElementById js/document "canvas"))
   (set! ctx    (.getContext canvas "2d"))
 
-  (set! (.-width canvas) width)
-  (set! (.-height canvas) height)
-  )
+  (aset canvas "width" width)
+  (aset canvas "height" height))
+
+;; wrapping Canvas2D functions for convenience
 
 (defn fill-style! [x] (aset ctx "fillStyle" x))
 (defn stroke-style! [x] (aset ctx "strokeStyle" x))
@@ -65,14 +69,10 @@
 (defn arc! [x y r a0 a1 cc] (.arc ctx x y r a0 a1 cc))
 (defn fill! [] (.fill ctx))
 (defn stroke! [] (.stroke ctx))
-(defn circle! [x y r]
-  (begin-path!)
-  (arc! x y r 0 (* 2 PI) false))
-
+(defn circle! [x y r] (begin-path!) (arc! x y r 0 (* 2 PI) false))
 (defn get-global-alpha [] (aget ctx "globalAlpha"))
 (defn set-global-alpha [x] (aset ctx "globalAlpha" x))
 (defn global-alpha! [x] (set-global-alpha (* x (get-global-alpha))))
-
 (defn font! [x] (aset ctx "font" x))
 (defn fill-text! [text x y] (.fillText ctx text x y))
 (defn stroke-text! [text x y] (.strokeText ctx text x y))
@@ -106,6 +106,7 @@
 ;;--------------------------------------------------------------------------------
 
 (defn set-cam!
+  "Set camera's position, zoom, and rotation."
   [{:keys [x y zoom angle]}]
   (translate! (/ width 2) (/ height 2))
   (translate! (- x) (- y))
@@ -113,6 +114,7 @@
   (rotate! angle))
 
 (defn draw!
+  "Draw the current state of the application."
   []
   (save!)
   (fill-style! "#222")
@@ -127,11 +129,20 @@
 ;; Timing
 ;;--------------------------------------------------------------------------------
 
-(def tick-chan (chan))
-(def tick-tap (mult tick-chan))
-(def prev-time nil)
+(def tick-chan
+  "This channel receives dt (delta time from last frame) in milliseconds."
+  (chan))
+
+(def tick-tap
+  "Allows anything to tap the tick channel (e.g. for animation)."
+  (mult tick-chan))
+
+(def prev-time
+  "Timestamp of the last tick."
+  nil)
 
 (defn tick!
+  "Creates heartbeat by hooking requestAnimationFrame to tick-chan."
   [curr-time]
   (draw!)
   (let [delta-ms (if prev-time
@@ -147,6 +158,7 @@
 ;;--------------------------------------------------------------------------------
 
 (def tweens
+  "In-betweening animation functions."
   {:linear identity
    :swing #(- 0.5 (/ (cos (* % PI)) 2)) ;; from jquery
 
@@ -154,10 +166,18 @@
 
    })
 
+(defn resolve-tween
+  "Resolve the tween to a function if it's a name."
+  [tween]
+  (cond-> tween
+    (keyword? tween) tweens))
+
 (defn animate!
-  [{:keys [a b duration tween]
-    :or {tween (:swing tweens)}} callback]
-  (let [c (chan)
+  "Pass given animation values to the given callback.
+   Returns a channel that closes when done."
+  [{:keys [a b duration tween] :or {tween :swing} :as opts} callback]
+  (let [tween (resolve-tween tween)
+        c (chan)
         dv (- b a)]
     (tap tick-tap c)
     (go-loop [t 0]
@@ -173,8 +193,11 @@
       (untap tick-tap c))))
 
 (defn multi-animate!
-  [opts callbacks]
-  (let [anims (mapv animate! opts callbacks)]
+  "Helper for concurrent animations with `animate!`.
+   Returns a channel that closes when all are done."
+  [arg-pairs]
+  (let [anims (->> (partition 2 arg-pairs)
+                   (mapv #(apply animate! %)))]
     (go
       (doseq [a anims]
         (<! a)))))
@@ -188,8 +211,8 @@
   (go
     (<! (multi-animate!
           [{:a 0 :b 1 :duration 1}
-           {:a 900 :b 0 :duration 1}]
-          [#(swap! state assoc-in [:js-face :alpha] %)
+           #(swap! state assoc-in [:js-face :alpha] %)
+           {:a 900 :b 0 :duration 1}
            #(swap! state assoc-in [:js-face :x] %)]))))
 
 ;;--------------------------------------------------------------------------------
@@ -197,22 +220,30 @@
 ;;--------------------------------------------------------------------------------
 
 (def slide-actions
+  "Actions to take for each slide."
   [nil
    go-go-slide1!
    ])
 
-(def num-slides (count slide-actions))
+(def num-slides
+  (count slide-actions))
 
-(defonce slide-states (atom []))
+;; Saved slide states, so we can revisit previous slides.
+(defonce slide-states
+  (atom []))
 
 (defn save-slide-state!
+  "Save the current application state as the current slide's initial state."
   []
   (let [i (:slide @state)]
     (swap! slide-states assoc i @state)))
 
-(def in-transition? (atom false))
+(def in-transition?
+  "True if we are in the middle of a slide's actions (i.e. animation)"
+  (atom false))
 
 (defn next-slide!
+  "Go to next slide if we can."
   []
   (when-not @in-transition?
     (when-let [action (get slide-actions (inc (:slide @state)))]
@@ -224,6 +255,7 @@
         (reset! in-transition? false)))))
 
 (defn prev-slide!
+  "Go to previous slide if we can."
   []
   (when-not @in-transition?
     (when-let [s (get @slide-states (dec (:slide @state)))]
@@ -257,12 +289,20 @@
 
 (defn main
   []
+
+  ;; initialize drawing canvas
   (init-canvas!)
+
+  ;; start animation heartbeat
   (.requestAnimationFrame js/window tick!)
+
+  ;; add controls
   (.addEventListener js/window "keydown" key-down)
 
+  ;; save state of first slide
   (save-slide-state!))
 
+;; start when ready
 (.addEventListener js/window "load" main)
 
 ;; start figwheel
