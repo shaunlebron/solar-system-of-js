@@ -817,6 +817,7 @@
      #(go
         (swap! state assoc-in [:dart :highlight] false)
         (swap! state assoc-in [:clojurescript :highlight] true)
+        (swap! state assoc-in [:clojurescript :angle] (- (/ PI 10)))
         (swap! state assoc-in [:radar :orbit] :clojurescript)
         (<! (multi-animate!
               {:a :_ :b 1 :duration 1} [:clojurescript :alpha]
