@@ -36,6 +36,18 @@
                  :es7 {:alpha 0}
                  :es8 {:alpha 0}}
    :highlight-layer nil
+   :transpiler {:x 900
+                :y 0
+                :alpha 0
+                :font-alpha 0}
+   :linter {:x 900
+            :y 70
+            :alpha 0
+            :font-alpha 0}
+   :modulesys {:x 900
+               :y 140
+               :alpha 0
+               :font-alpha 0}
    })
 
 ;; Current state of the application.
@@ -198,7 +210,6 @@
       (stroke-style! "#1EA")
       (stroke!))))
 
-
 (defn draw-es-captions!
   [{:keys [es3 es5 es6 es7 es8]}]
   (save!)
@@ -241,9 +252,49 @@
         )
       (restore!)
       ))
-  (restore!)
-  )
+  (restore!))
 
+(defn draw-sign!
+  [{:keys [x y alpha font-alpha highlight]} caption offset]
+  (when-not (zero? alpha)
+    (save!)
+    (translate! x y)
+    (let [a 10
+          w 100
+          h 30]
+      (translate! (- (* 2 a (* 1.2 offset))) 0)
+
+      (save!)
+      (global-alpha! alpha)
+      (begin-path!)
+      (move-to! (- a w) (- h))
+      (line-to! (+ a w) (- h))
+      (line-to! (- w a) (+ h))
+      (line-to! (- (+ w a)) (+ h))
+      (fill-style! (if highlight "#1EA" "#EEE"))
+      (fill!)
+      (restore!)
+
+      (global-alpha! font-alpha)
+      (text-baseline! "middle")
+      (text-align! "center")
+      (font! "100 24px Roboto")
+      (fill-style! "#222")
+      (fill-style! (if highlight "#222" "#222"))
+      (fill-text! caption 0 0))
+    (restore!)))
+
+(defn draw-transpiler!
+  [opts]
+  (draw-sign! opts "TRANSPILER" 0))
+
+(defn draw-linter!
+  [opts]
+  (draw-sign! opts "LINTER" 1))
+
+(defn draw-modulesys!
+  [opts]
+  (draw-sign! opts "MODULE SYS" 2))
 
 ;;--------------------------------------------------------------------------------
 ;; Drawing
@@ -267,9 +318,14 @@
 
   (draw-title! (:title @state))
   (draw-js-core! (:js-core @state))
-  (draw-js-face! (:js-face @state))
   (draw-es-captions! (:es-captions @state))
   (draw-highlight-layer! (:highlight-layer @state))
+
+  (draw-transpiler! (:transpiler @state))
+  (draw-linter! (:linter @state))
+  (draw-modulesys! (:modulesys @state))
+
+  (draw-js-face! (:js-face @state))
 
   (restore!))
 
@@ -397,11 +453,14 @@
                  {:a :_ :b 1 :duration t} [:es-captions :es8 :alpha])))
         ])
      #(go
+        (swap! state assoc-in [:transpiler :highlight] true)
         (let [chans [(multi-animate!
                        {:a :_ :b 0 :duration 0.01} [:es-captions :es8 :alpha]
                        {:a :_ :b 200 :duration 1} [:cam :x]
                        {:a :_ :b 1.3 :duration 1} [:cam :zoom]
-                       {:a :_ :b 1 :duration 1} [:transpiler :x]
+                       {:a :_ :b 450 :duration 1} [:transpiler :x]
+                       {:a :_ :b 1 :duration 1} [:transpiler :alpha]
+                       {:a :_ :b 1 :duration 1} [:transpiler :font-alpha]
                        )
                      (go
                        (<! (timeout 50))
@@ -410,6 +469,38 @@
                          (<! (timeout 70))))]]
           (doseq [c chans]
             (<! c))))
+     #(go
+        (swap! state assoc-in [:transpiler :highlight] false)
+        (swap! state assoc-in [:linter :highlight] true)
+        (<! (multi-animate!
+              {:a :_ :b 1 :duration 1} [:linter :alpha]
+              {:a :_ :b 1 :duration 1} [:linter :font-alpha]
+              {:a :_ :b 450 :duration 1} [:linter :x])))
+     #(go
+        (swap! state assoc-in [:linter :highlight] false)
+        (swap! state assoc-in [:modulesys :highlight] true)
+        (<! (multi-animate!
+              {:a :_ :b 1 :duration 1} [:modulesys :alpha]
+              {:a :_ :b 1 :duration 1} [:modulesys :font-alpha]
+              {:a :_ :b 450 :duration 1} [:modulesys :x])))
+     #(go
+        (swap! state assoc-in [:modulesys :highlight] false)
+        (let [t 2]
+          (<! (multi-animate!
+                {:a :_ :b 0 :duration t} [:transpiler :font-alpha]
+                {:a :_ :b 0 :duration t} [:linter :font-alpha]
+                {:a :_ :b 0 :duration t} [:modulesys :font-alpha]
+                {:a :_ :b 220 :duration t} [:transpiler :x]
+                {:a :_ :b 220 :duration t} [:linter :x]
+                {:a :_ :b 220 :duration t} [:modulesys :x]
+                {:a :_ :b 0 :duration t} [:js-face :y]
+                {:a :_ :b 0 :duration t} [:js-face :x]
+                {:a :_ :b 0 :duration t} [:js-face :angle]
+                {:a 1 :b 1 :duration t} [:js-face :alpha]
+                {:a :_ :b 1 :duration t} [:cam :zoom]
+                {:a :_ :b 0 :duration t} [:cam :x]
+                {:a :_ :b 0 :duration t} [:cam :y]
+                ))))
      ])))
 
 (def num-slides
