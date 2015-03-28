@@ -153,7 +153,7 @@
   (font! "100 100px Roboto")
   (text-align! "center")
   (text-baseline! "middle")
-  (fill-style! "#555")
+  (fill-style! "#DDD")
   (fill-text! "Solar System of JS" x y)
   (restore!)
   )
