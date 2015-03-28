@@ -48,6 +48,12 @@
                :y 140
                :alpha 0
                :font-alpha 0}
+   :static {:title {:alpha 0}
+            :sphere {:alpha 0
+                     :r 200}
+            :typescript {:alpha 0}
+            :soundscript {:alpha 0}
+            :flow {:alpha 0}}
    })
 
 ;; Current state of the application.
@@ -161,7 +167,7 @@
     :color "#999"
     }
    {:name "ES7"
-    :desc "observe, async, comprehensions"
+    :desc "observe, async, comprehensions, guards"
     :color "#777"
     }
    {:name "ES8"
@@ -296,6 +302,32 @@
   [opts]
   (draw-sign! opts "MODULE SYS" 2))
 
+(defn draw-staticsphere!
+  [{:keys [alpha r]}]
+  (save!)
+  (when-not (zero? alpha)
+    (global-alpha! alpha)
+    (circle! 0 0 r)
+    (fill-style! "#BCC")
+    (fill!))
+  (restore!))
+
+(defn draw-static!
+  [{:keys [title sphere typescript soundscript flow]}]
+  (save!)
+
+  (save!)
+  (global-alpha! (:alpha title))
+  (font! "100 90px Roboto")
+  (text-baseline! "middle")
+  (text-align! "center")
+  (fill-style! "#677")
+  (fill-text! "STATIC TYPING" 0 -600)
+  (restore!)
+
+  (draw-staticsphere! sphere)
+  (restore!))
+
 ;;--------------------------------------------------------------------------------
 ;; Drawing
 ;;--------------------------------------------------------------------------------
@@ -325,7 +357,10 @@
   (draw-linter! (:linter @state))
   (draw-modulesys! (:modulesys @state))
 
+  (draw-static! (:static @state))
+
   (draw-js-face! (:js-face @state))
+  
 
   (restore!))
 
@@ -516,6 +551,22 @@
                 {:a :_ :b 0 :duration t} [:cam :x]
                 {:a :_ :b 0 :duration t} [:cam :y]
                 ))))
+
+     ;; show staticsphere
+     #(go
+        (<! (multi-animate!
+              {:a :_ :b 0 :duration 1} [:transpiler :alpha]
+              {:a :_ :b 0 :duration 1} [:linter :alpha]
+              {:a :_ :b 0 :duration 1} [:modulesys :alpha]
+              {:a :_ :b 0.5 :duration 1} [:cam :zoom]
+              {:a :_ :b -50 :duration 1} [:cam :y]
+              ))
+        (<! (multi-animate!
+              {:a :_ :b 1 :duration 1} [:static :title :alpha]
+              {:a :_ :b 1 :duration 1} [:static :sphere :alpha]
+              {:a :_ :b 400 :duration 1} [:static :sphere :r]))
+        )
+
 
      ])))
 
