@@ -35,6 +35,7 @@
                  :es6 {:alpha 0}
                  :es7 {:alpha 0}
                  :es8 {:alpha 0}}
+   :highlight-layer nil
    })
 
 ;; Current state of the application.
@@ -184,6 +185,20 @@
   (restore!)
   )
 
+(defn draw-highlight-layer!
+  [i]
+  (when i
+    (let [r (-> @state :js-face :r)
+          dr (get-core-dr r)
+          cr (- (get-core-radius i r) (/ dr 2))]
+
+      ;; highlight the layer
+      (line-width! dr)
+      (circle! 0 0 cr)
+      (stroke-style! "#1EA")
+      (stroke!))))
+
+
 (defn draw-es-captions!
   [{:keys [es3 es5 es6 es7 es8]}]
   (save!)
@@ -204,10 +219,7 @@
             at (/ a 3)]
 
         ;; highlight the layer
-        (line-width! dr)
-        (circle! 0 0 cr)
-        (stroke-style! "#1EA")
-        (stroke!)
+        (draw-highlight-layer! i)
 
         ;; point at layer
         (line-width! 5)
@@ -257,6 +269,7 @@
   (draw-js-core! (:js-core @state))
   (draw-js-face! (:js-face @state))
   (draw-es-captions! (:es-captions @state))
+  (draw-highlight-layer! (:highlight-layer @state))
 
   (restore!))
 
@@ -307,20 +320,14 @@
   (cond-> tween
     (keyword? tween) tweens))
 
-(defn resolve-callback
-  "If the callback is a state path, create the callback to set that path."
-  [callback]
-  (if-let [path (when (vector? callback) callback)]
-    #(swap! state assoc-in path %)
-    callback))
-
 (defn animate!
   "Pass given animation values to the given callback.
    Returns a channel that closes when done."
-  [{:keys [a b duration tween] :or {tween :swing} :as opts} callback]
+  [{:keys [a b duration tween] :or {tween :swing} :as opts} state-path]
   (let [tween (resolve-tween tween)
-        callback (resolve-callback callback)
         c (chan)
+        resolve-var #(if (= % :_) (get-in @state state-path) %)
+        a (resolve-var a)
         dv (- b a)]
     (tap tick-tap c)
     (go-loop [t 0]
@@ -330,7 +337,7 @@
                         (min 1)
                         (tween))
             v (+ a (* percent dv))]
-        (callback v)
+        (swap! state assoc-in state-path v)
         (when (< t duration)
           (recur t)))
       (untap tick-tap c))))
@@ -355,40 +362,54 @@
     [nil ;; no action for first slide
      #(go
         (<! (multi-animate!
-              {:a 900 :b 0 :duration 1} [:js-face :x]
-              {:a 1 :b 0 :duration 0.4} [:title :alpha])))
+              {:a :_ :b 0 :duration 1} [:js-face :x]
+              {:a :_ :b 0 :duration 0.4} [:title :alpha])))
      #(go
         (<! (multi-animate!
-              {:a 0 :b 400 :duration 2} [:cam :x]
-              {:a 0 :b -600 :duration 2} [:js-face :y]
-              {:a 0 :b 600 :duration 2} [:js-face :x]
-              {:a 0 :b (* 2 PI) :duration 2} [:js-face :angle]
-              {:a 1 :b 0 :duration 2} [:js-face :alpha]
-              {:a 0 :b 1 :duration 1} [:js-core :alpha]
-              {:a 1 :b 2 :duration 2} [:cam :zoom])))
+              {:a :_ :b 400 :duration 2} [:cam :x]
+              {:a :_ :b -600 :duration 2} [:js-face :y]
+              {:a :_ :b 600 :duration 2} [:js-face :x]
+              {:a :_ :b (* 2 PI) :duration 2} [:js-face :angle]
+              {:a :_ :b 0 :duration 2} [:js-face :alpha]
+              {:a :_ :b 1 :duration 1} [:js-core :alpha]
+              {:a :_ :b 2 :duration 2} [:cam :zoom])))
      (let [t 0.01
            low 0]
        [
         #(go
            (<! (animate!
-                 {:a 0 :b 1 :duration t} [:es-captions :es3 :alpha])))
+                 {:a :_ :b 1 :duration t} [:es-captions :es3 :alpha])))
         #(go
            (<! (multi-animate!
-                 {:a 1 :b low :duration t} [:es-captions :es3 :alpha]
-                 {:a 0 :b 1 :duration t} [:es-captions :es5 :alpha])))
+                 {:a :_ :b low :duration t} [:es-captions :es3 :alpha]
+                 {:a :_ :b 1 :duration t} [:es-captions :es5 :alpha])))
         #(go
            (<! (multi-animate!
-                 {:a 1 :b low :duration t} [:es-captions :es5 :alpha]
-                 {:a 0 :b 1 :duration t} [:es-captions :es6 :alpha])))
+                 {:a :_ :b low :duration t} [:es-captions :es5 :alpha]
+                 {:a :_ :b 1 :duration t} [:es-captions :es6 :alpha])))
         #(go
            (<! (multi-animate!
-                 {:a 1 :b low :duration t} [:es-captions :es6 :alpha]
-                 {:a 0 :b 1 :duration t} [:es-captions :es7 :alpha])))
+                 {:a :_ :b low :duration t} [:es-captions :es6 :alpha]
+                 {:a :_ :b 1 :duration t} [:es-captions :es7 :alpha])))
         #(go
            (<! (multi-animate!
-                 {:a 1 :b low :duration t} [:es-captions :es7 :alpha]
-                 {:a 0 :b 1 :duration t} [:es-captions :es8 :alpha])))
+                 {:a :_ :b low :duration t} [:es-captions :es7 :alpha]
+                 {:a :_ :b 1 :duration t} [:es-captions :es8 :alpha])))
         ])
+     #(go
+        (let [chans [(multi-animate!
+                       {:a :_ :b 0 :duration 0.01} [:es-captions :es8 :alpha]
+                       {:a :_ :b 200 :duration 1} [:cam :x]
+                       {:a :_ :b 1.3 :duration 1} [:cam :zoom]
+                       {:a :_ :b 1 :duration 1} [:transpiler :x]
+                       )
+                     (go
+                       (<! (timeout 50))
+                       (doseq [i [1 2 3 4 3 2 1 2 3 4 3 2 1 2 3 4 nil]]
+                         (swap! state assoc :highlight-layer i)
+                         (<! (timeout 70))))]]
+          (doseq [c chans]
+            (<! c))))
      ])))
 
 (def num-slides
