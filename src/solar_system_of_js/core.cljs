@@ -430,8 +430,38 @@
   (stroke!))
 
 (defn draw-radar!
-  [opts]
-  )
+  [{:keys [orbit offset]}]
+  (when orbit
+    (save!)
+    (let [o (-> @state orbit)
+          r (:r o)
+          dx (cos (:angle o))
+          dy (sin (:angle o))
+          gap 40
+          offset (mod offset (* 2 gap))
+          x (* (:r o) dx)
+          y (* (:r o) dy)
+          lx (- dy)
+          ly dx
+          rx dy
+          ry (- dx)
+          ]
+      (global-alpha! (/ (:alpha o) 2))
+      (line-width! 20)
+      (stroke-style! "#f7df1e")
+
+      (loop [i 0]
+        (let [r0 (+ offset (* i gap))
+              w (* (+ 0.2 (/ r0 r)) gap)
+              x0 (+ (- x (* dx r0)) (* lx w))
+              y0 (+ (- y (* dy r0)) (* ly w))
+              x1 (+ (- x (* dx r0)) (* rx w))
+              y1 (+ (- y (* dy r0)) (* ry w))]
+          (when (<= r0 r)
+            (stroke-line! x0 y0 x1 y1)
+            (recur (+ i 1)))))
+      )
+    (restore!)))
 
 (defn draw-planet!
   [{:keys [size angle r highlight]}]
@@ -469,7 +499,7 @@
       (font! "100 200px Roboto")
       (text-baseline! "middle")
       (text-align! "center")
-      (fill-style! "#DEE")
+      (fill-style! "#566")
       (fill-text! "DART" 0 -1700))
     (restore!)))
 
@@ -519,11 +549,14 @@
 
   (draw-static! (:static @state))
 
+  (draw-radar! (:radar @state))
+
   (draw-js-face! (:js-face @state))
 
   (draw-coffeescript! (:coffeescript @state))
   (draw-dart! (:dart @state))
   (draw-clojurescript! (:clojurescript @state))
+
   
 
   (restore!))
@@ -547,7 +580,7 @@
 (defn tick-radar!
   [dt]
   (when (:enable-orbits? @state)
-    nil))
+    (swap! state update-in [:radar :offset] + (* dt 400))))
 
 ;;--------------------------------------------------------------------------------
 ;; Timing
