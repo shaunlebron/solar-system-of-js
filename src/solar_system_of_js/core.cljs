@@ -9,6 +9,14 @@
 (enable-console-print!)
 
 ;;--------------------------------------------------------------------------------
+;; Math
+;;--------------------------------------------------------------------------------
+
+(def PI  (aget js/Math "PI"))
+(def cos (aget js/Math "cos"))
+(def sin (aget js/Math "sin"))
+
+;;--------------------------------------------------------------------------------
 ;; State
 ;;--------------------------------------------------------------------------------
 
@@ -57,36 +65,33 @@
             :soundscript {:alpha 0}
             :flow {:alpha 0}}
    :coffeescript {:alpha 0
+                  :size 50
+                  :highlight false
                   :angle 0
-                  :radar {:alpha 0
-                          :offset 0}
+                  :angle-speed (/ PI 5)
                   :r 900
                   }
    :dart {:alpha 0
+          :size 100
+          :highlight false
           :angle 0
-          :radar {:alpha 0
-                  :offset 0}
+          :angle-speed (/ PI 15)
           :r 1400
                   }
    :clojurescript {:alpha 0
+                   :size 100
+                   :highlight false
                    :angle 0
-                   :radar {:alpha 0
-                           :offset 0}
-                   :r 1900
+                   :angle-speed (/ PI 10)
+                   :r 2100
                   }
+   :radar {:orbit nil
+           :offset 0}
    })
 
 ;; Current state of the application.
 (defonce state
   (atom initial-state))
-
-;;--------------------------------------------------------------------------------
-;; Math
-;;--------------------------------------------------------------------------------
-
-(def PI  (aget js/Math "PI"))
-(def cos (aget js/Math "cos"))
-(def sin (aget js/Math "sin"))
 
 ;;--------------------------------------------------------------------------------
 ;; Canvas
@@ -418,24 +423,52 @@
     (restore!)))
 
 (defn draw-orbit!
-  [opts]
-  )
+  [{:keys [r]}]
+  (line-width! 10)
+  (circle! 0 0 r)
+  (stroke-style! "#566")
+  (stroke!))
 
 (defn draw-radar!
   [opts]
   )
 
+(defn draw-planet!
+  [{:keys [size angle r highlight]}]
+  (let [x (* r (cos angle))
+        y (* r (sin angle))]
+
+    (circle! x y size)
+    (fill-style! (if highlight "#FFF" "#566"))
+    (fill!)
+    ))
+
 (defn draw-coffeescript!
-  [opts]
-  )
+  [{:keys [alpha] :as opts}]
+  (when-not (zero? alpha)
+    (save!)
+    (global-alpha! alpha)
+    (draw-orbit! opts)
+    (draw-planet! opts)
+    (restore!)))
 
 (defn draw-dart!
-  [opts]
-  )
+  [{:keys [alpha] :as opts}]
+  (when-not (zero? alpha)
+    (save!)
+    (global-alpha! alpha)
+    (draw-orbit! opts)
+    (draw-planet! opts)
+    (restore!)))
 
 (defn draw-clojurescript!
-  [opts]
-  )
+  [{:keys [alpha] :as opts}]
+  (when-not (zero? alpha)
+    (save!)
+    (global-alpha! alpha)
+    (draw-orbit! opts)
+    (draw-planet! opts)
+    (restore!)))
 
 ;;--------------------------------------------------------------------------------
 ;; Drawing
@@ -478,6 +511,27 @@
   (restore!))
 
 ;;--------------------------------------------------------------------------------
+;; Loops
+;;--------------------------------------------------------------------------------
+
+(defn update-orbit!
+  [name- dt]
+  (let [v (* dt (get-in @state [name- :angle-speed]))]
+    (swap! state update-in [name- :angle] + v)))
+
+(defn tick-orbits!
+  [dt]
+  (when (:enable-orbits? @state)
+    (update-orbit! :coffeescript dt)
+    (update-orbit! :dart dt)
+    (update-orbit! :clojurescript dt)))
+
+(defn tick-radar!
+  [dt]
+  (when (:enable-orbits? @state)
+    nil))
+
+;;--------------------------------------------------------------------------------
 ;; Timing
 ;;--------------------------------------------------------------------------------
 
@@ -502,7 +556,11 @@
                    (/ 1000 60))
         dt (/ delta-ms 1000)]
     (set! prev-time curr-time)
-    (put! tick-chan dt))
+    (put! tick-chan dt)
+
+    (tick-orbits! dt)
+    (tick-radar! dt)
+    )
   (.requestAnimationFrame js/window tick!))
 
 ;;--------------------------------------------------------------------------------
@@ -720,22 +778,34 @@
 
      ;; show coffeescript
      #(go
-        (swap! state assoc :enable-orbits true)
+        (swap! state assoc :enable-orbits? true)
+        (swap! state assoc-in [:radar :orbit] :coffeescript)
+        (swap! state assoc-in [:coffeescript :highlight] true)
         (<! (multi-animate!
               {:a :_ :b 1 :duration 1} [:coffeescript :alpha]
               )))
 
      ;; show dart
      #(go
+        (swap! state assoc-in [:coffeescript :highlight] false)
+        (swap! state assoc-in [:dart :highlight] true)
+        (swap! state assoc-in [:radar :orbit] :dart)
         (<! (multi-animate!
               {:a :_ :b 1 :duration 1} [:dart :alpha]
-              {:a :_ :b 0.1 :duration 1} [:cam :zoom])))
+              ;;{:a :_ :b 0.1 :duration 1} [:cam :zoom]
+              )))
 
      ;; show clojurescript
      #(go
+        (swap! state assoc-in [:dart :highlight] false)
+        (swap! state assoc-in [:clojurescript :highlight] true)
+        (swap! state assoc-in [:radar :orbit] :clojurescript)
         (<! (multi-animate!
               {:a :_ :b 1 :duration 1} [:clojurescript :alpha]
-              {:a :_ :b 0.05 :duration 1} [:cam :zoom])))
+              {:a :_ :b 0 :duration 1} [:cam :y]
+              {:a :_ :b 300 :duration 1} [:cam :x]
+              {:a :_ :b 0.15 :duration 1} [:cam :zoom]
+              )))
 
      ])))
 
