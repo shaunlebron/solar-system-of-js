@@ -415,11 +415,16 @@
 (def slide-actions
   "Actions to take for each slide."
   (vec (flatten
-    [nil ;; no action for first slide
+    [;; no action for first slide
+     nil
+
+     ;; slide in the JS logo
      #(go
         (<! (multi-animate!
               {:a :_ :b 0 :duration 1} [:js-face :x]
               {:a :_ :b 0 :duration 0.4} [:title :alpha])))
+
+     ;; peel back JS logo to see its layers
      #(go
         (<! (multi-animate!
               {:a :_ :b 400 :duration 2} [:cam :x]
@@ -429,8 +434,10 @@
               {:a :_ :b 0 :duration 2} [:js-face :alpha]
               {:a :_ :b 1 :duration 1} [:js-core :alpha]
               {:a :_ :b 2 :duration 2} [:cam :zoom])))
-     (let [t 0.01
-           low 0]
+
+     ;; highlight individual JS versions
+     (let [t 0.01 ;; time between each transition
+           low 0] ;; visited version alpha (faded out)
        [
         #(go
            (<! (animate!
@@ -452,6 +459,8 @@
                  {:a :_ :b low :duration t} [:es-captions :es7 :alpha]
                  {:a :_ :b 1 :duration t} [:es-captions :es8 :alpha])))
         ])
+
+     ;; flash all layers and show transpiler
      #(go
         (swap! state assoc-in [:transpiler :highlight] true)
         (let [chans [(multi-animate!
@@ -469,6 +478,8 @@
                          (<! (timeout 70))))]]
           (doseq [c chans]
             (<! c))))
+
+     ;; show linter
      #(go
         (swap! state assoc-in [:transpiler :highlight] false)
         (swap! state assoc-in [:linter :highlight] true)
@@ -476,6 +487,8 @@
               {:a :_ :b 1 :duration 1} [:linter :alpha]
               {:a :_ :b 1 :duration 1} [:linter :font-alpha]
               {:a :_ :b 450 :duration 1} [:linter :x])))
+
+     ;; show module sys
      #(go
         (swap! state assoc-in [:linter :highlight] false)
         (swap! state assoc-in [:modulesys :highlight] true)
@@ -483,6 +496,8 @@
               {:a :_ :b 1 :duration 1} [:modulesys :alpha]
               {:a :_ :b 1 :duration 1} [:modulesys :font-alpha]
               {:a :_ :b 450 :duration 1} [:modulesys :x])))
+
+     ;; put JS back together, showing it required tools
      #(go
         (swap! state assoc-in [:modulesys :highlight] false)
         (let [t 2]
@@ -501,6 +516,7 @@
                 {:a :_ :b 0 :duration t} [:cam :x]
                 {:a :_ :b 0 :duration t} [:cam :y]
                 ))))
+
      ])))
 
 (def num-slides
