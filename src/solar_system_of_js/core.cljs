@@ -30,6 +30,11 @@
              :y 0
              :r 200
              :alpha 0}
+   :es-captions {:es3 {:alpha 0}
+                 :es5 {:alpha 0}
+                 :es6 {:alpha 0}
+                 :es7 {:alpha 0}
+                 :es8 {:alpha 0}}
    })
 
 ;; Current state of the application.
@@ -79,6 +84,9 @@
 (defn fill! [] (.fill ctx))
 (defn stroke! [] (.stroke ctx))
 (defn circle! [x y r] (begin-path!) (arc! x y r 0 (* 2 PI) false))
+(defn move-to! [x y] (.moveTo ctx x y))
+(defn line-to! [x y] (.lineTo ctx x y))
+(defn stroke-line! [x0 y0 x1 y1] (begin-path!) (move-to! x0 y0) (line-to! x1 y1) (stroke!))
 (defn get-global-alpha [] (aget ctx "globalAlpha"))
 (defn set-global-alpha [x] (aset ctx "globalAlpha" x))
 (defn global-alpha! [x] (set-global-alpha (* x (get-global-alpha))))
@@ -88,6 +96,7 @@
 (defn text-align! [x] (aset ctx "textAlign" x))
 (defn text-baseline! [x] (aset ctx "textBaseline" x))
 (defn line-width! [x] (aset ctx "lineWidth" x))
+(defn line-cap! [x] (aset ctx "lineCap" x))
 
 ;;--------------------------------------------------------------------------------
 ;; Slide Drawings
@@ -127,21 +136,36 @@
 (def core-layers
   "colors of js-core layers"
   [{:name "ES3"
+    :desc "core features"
     :color "#DDD"
     }
    {:name "ES5"
+    :desc "new functions and strict mode"
     :color "#BBB"
     }
    {:name "ES6"
+    :desc "new syntax, concepts, etc."
     :color "#999"
     }
    {:name "ES7"
+    :desc "observe, async, comprehensions"
     :color "#777"
     }
    {:name "ES8"
+    :desc "macros?"
     :color "#555"
     }
    ])
+
+(defn get-core-dr
+  "Get core layer delta radius."
+  [r]
+  (/ r (count core-layers)))
+
+(defn get-core-radius
+  "Get radius of the given core layer index and outer radius."
+  [i r]
+  (* (inc i) (get-core-dr r)))
 
 (defn draw-js-core!
   [{:keys [x y r alpha]}]
@@ -149,7 +173,7 @@
   (global-alpha! alpha)
   (stroke-style! "#EEE")
   (doseq [[i layer] (reverse (map-indexed vector core-layers))]
-    (let [cr (* (inc i) (/ r (count core-layers)))]
+    (let [cr (get-core-radius i r)]
       (circle! x y cr)
       (fill-style! (:color layer))
       (fill!)))
@@ -157,6 +181,54 @@
   (stroke-style! "#f7df1e")
   (line-width! 10)
   (stroke!)
+  (restore!)
+  )
+
+(defn draw-es-captions!
+  [{:keys [es3 es5 es6 es7 es8]}]
+  (save!)
+  (doseq [[i es] (map-indexed vector [es3 es5 es6 es7 es8])]
+    (when-not (zero? (:alpha es))
+      (save!)
+      (global-alpha! (:alpha es))
+      (let [angle (/ PI 4)
+            dx (cos angle)
+            dy (sin angle)
+            r (-> @state :js-face :r)
+            dr (get-core-dr r)
+            cr (- (get-core-radius i r) (/ dr 2))
+            y (- (* dy cr))
+            x0 (* dx cr)
+            x1 250
+            a 10
+            at (/ a 3)]
+
+        ;; highlight the layer
+        (line-width! dr)
+        (circle! 0 0 cr)
+        (stroke-style! "#1EA")
+        (stroke!)
+
+        ;; point at layer
+        (line-width! 5)
+        (line-cap! "round")
+        (stroke-line! x0 y x1 y)
+        (stroke!)
+
+        ;; draw caption
+        (let [layer (get core-layers i)]
+          (text-baseline! "middle")
+          (text-align! "left")
+          (fill-style! "#EEE")
+          (font! "100 40px Roboto")
+          (fill-text! (:name layer) (+ 10 x1) y)
+          (fill-style! "#AAA")
+          (font! "100 14px Roboto")
+          (fill-text! (:desc layer) (+ 15 x1) (+ 30 y)))
+
+        )
+      (restore!)
+      ))
   (restore!)
   )
 
@@ -184,6 +256,7 @@
   (draw-title! (:title @state))
   (draw-js-core! (:js-core @state))
   (draw-js-face! (:js-face @state))
+  (draw-es-captions! (:es-captions @state))
 
   (restore!))
 
@@ -278,23 +351,45 @@
 
 (def slide-actions
   "Actions to take for each slide."
-  [nil ;; no action for first slide
-   #(go
-      (<! (multi-animate!
-            {:a 900 :b 0 :duration 1} [:js-face :x]
-            {:a 1 :b 0 :duration 0.4} [:title :alpha]
-            )))
-   #(go
-      (<! (multi-animate!
-            {:a 0 :b 400 :duration 2} [:cam :x]
-            {:a 0 :b -600 :duration 2} [:js-face :y]
-            {:a 0 :b 600 :duration 2} [:js-face :x]
-            {:a 0 :b (* 2 PI) :duration 2} [:js-face :angle]
-            {:a 1 :b 0 :duration 2} [:js-face :alpha]
-            {:a 0 :b 1 :duration 1} [:js-core :alpha]
-            {:a 1 :b 2 :duration 2} [:cam :zoom]
-            )))
-   ])
+  (vec (flatten
+    [nil ;; no action for first slide
+     #(go
+        (<! (multi-animate!
+              {:a 900 :b 0 :duration 1} [:js-face :x]
+              {:a 1 :b 0 :duration 0.4} [:title :alpha])))
+     #(go
+        (<! (multi-animate!
+              {:a 0 :b 400 :duration 2} [:cam :x]
+              {:a 0 :b -600 :duration 2} [:js-face :y]
+              {:a 0 :b 600 :duration 2} [:js-face :x]
+              {:a 0 :b (* 2 PI) :duration 2} [:js-face :angle]
+              {:a 1 :b 0 :duration 2} [:js-face :alpha]
+              {:a 0 :b 1 :duration 1} [:js-core :alpha]
+              {:a 1 :b 2 :duration 2} [:cam :zoom])))
+     (let [t 0.01
+           low 0]
+       [
+        #(go
+           (<! (animate!
+                 {:a 0 :b 1 :duration t} [:es-captions :es3 :alpha])))
+        #(go
+           (<! (multi-animate!
+                 {:a 1 :b low :duration t} [:es-captions :es3 :alpha]
+                 {:a 0 :b 1 :duration t} [:es-captions :es5 :alpha])))
+        #(go
+           (<! (multi-animate!
+                 {:a 1 :b low :duration t} [:es-captions :es5 :alpha]
+                 {:a 0 :b 1 :duration t} [:es-captions :es6 :alpha])))
+        #(go
+           (<! (multi-animate!
+                 {:a 1 :b low :duration t} [:es-captions :es6 :alpha]
+                 {:a 0 :b 1 :duration t} [:es-captions :es7 :alpha])))
+        #(go
+           (<! (multi-animate!
+                 {:a 1 :b low :duration t} [:es-captions :es7 :alpha]
+                 {:a 0 :b 1 :duration t} [:es-captions :es8 :alpha])))
+        ])
+     ])))
 
 (def num-slides
   (count slide-actions))
