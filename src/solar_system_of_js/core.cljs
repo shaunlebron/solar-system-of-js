@@ -1,4 +1,5 @@
 (ns solar-system-of-js.core
+
   (:require-macros
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
@@ -50,7 +51,8 @@
                :font-alpha 0}
    :static {:title {:alpha 0}
             :sphere {:alpha 0
-                     :r 200}
+                     :r 200
+                     :angle 0}
             :typescript {:alpha 0}
             :soundscript {:alpha 0}
             :flow {:alpha 0}}
@@ -302,31 +304,88 @@
   [opts]
   (draw-sign! opts "MODULE SYS" 2))
 
+(defn draw-static-arc!
+  [start-a stop-a color]
+  (save!)
+  (let [r-out (-> @state :static :sphere :r)
+        r-in (-> @state :js-face :r)
+        dr (- r-out r-in)
+        r (+ r-in (/ dr 2))
+        thick (* 0.8 dr)]
+    (line-width! thick)
+    (stroke-style! color)
+    (begin-path!)
+    (arc! 0 0 r start-a stop-a false)
+    (stroke!)
+    )
+  (restore!))
+
+(defn draw-typescript!
+  [{:keys [alpha]}]
+  (when-not (zero? alpha)
+    nil))
+
+(defn draw-soundscript!
+  [opts]
+  )
+
+(defn draw-flow!
+  [opts]
+  )
+
 (defn draw-staticsphere!
-  [{:keys [alpha r]}]
+  [{:keys [angle alpha r]}]
   (save!)
   (when-not (zero? alpha)
     (global-alpha! alpha)
     (circle! 0 0 r)
     (fill-style! "#BCC")
-    (fill!))
+    (fill!)
+    
+    ;; draw the arc
+    (let [a (/ PI 2)
+          da (/ (* 2 PI) 3)
+          start-a (+ a da)]
+
+      (draw-static-arc! start-a (+ start-a angle) "#FFF")
+
+      ;; hack to grey out previously visited arcs
+      (let [second-a (cond
+                       (> angle (* 2 da)) (* 2 da)
+                       (> angle da) da)]
+        (draw-static-arc! start-a (+ start-a second-a) "#CDD")))
+
+    ;; draw dividers
+    (when (= 1 alpha)
+      (line-width! 24)
+      (stroke-style! "#BCC")
+      (let [r (-> @state :static :sphere :r)]
+        (dotimes [i 3]
+          (stroke-line! 0 0 0 r)
+          (rotate! (/ (* 2 PI) 3)))))
+    )
   (restore!))
 
 (defn draw-static!
-  [{:keys [title sphere typescript soundscript flow]}]
-  (save!)
+  [{:keys [title sphere angle typescript soundscript flow]}]
+  (when-not (zero? (:alpha sphere))
+    (save!)
 
-  (save!)
-  (global-alpha! (:alpha title))
-  (font! "100 90px Roboto")
-  (text-baseline! "middle")
-  (text-align! "center")
-  (fill-style! "#677")
-  (fill-text! "STATIC TYPING" 0 -600)
-  (restore!)
+    (save!)
+    (global-alpha! (:alpha title))
+    (font! "100 90px Roboto")
+    (text-baseline! "middle")
+    (text-align! "center")
+    (fill-style! "#677")
+    (fill-text! "STATIC TYPING" 0 -600)
+    (restore!)
 
-  (draw-staticsphere! sphere)
-  (restore!))
+    (draw-staticsphere! sphere)
+    (draw-typescript! typescript)
+    (draw-soundscript! soundscript)
+    (draw-flow! flow)
+
+    (restore!)))
 
 ;;--------------------------------------------------------------------------------
 ;; Drawing
@@ -564,9 +623,32 @@
         (<! (multi-animate!
               {:a :_ :b 1 :duration 1} [:static :title :alpha]
               {:a :_ :b 1 :duration 1} [:static :sphere :alpha]
-              {:a :_ :b 400 :duration 1} [:static :sphere :r]))
-        )
+              {:a :_ :b 400 :duration 1} [:static :sphere :r])))
 
+     (let [angle (/ (* 2 PI) 3)]
+       [;; show typescript
+        #(go
+           (<! (multi-animate!
+                 {:a :_ :b 300 :duration 1} [:cam :x]
+                 {:a :_ :b 1 :duration 1} [:static :typescript :alpha]
+                 {:a :_ :b angle :duration 1} [:static :sphere :angle]
+                 )))
+
+        ;; show flow
+        #(go
+           (<! (multi-animate!
+                 {:a :_ :b 1 :duration 1} [:static :flow :alpha]
+                 {:a :_ :b 0.5 :duration 1} [:static :typescript :alpha]
+                 {:a :_ :b (* 2 angle) :duration 1} [:static :sphere :angle]
+                 )))
+
+        ;; show soundscript
+        #(go
+           (<! (multi-animate!
+                 {:a :_ :b 0.5 :duration 1} [:static :flow :alpha]
+                 {:a :_ :b 1 :duration 1} [:static :soundscript :alpha]
+                 {:a :_ :b (* 3 angle) :duration 1} [:static :sphere :angle]
+                 )))])
 
      ])))
 
