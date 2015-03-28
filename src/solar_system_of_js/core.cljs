@@ -56,6 +56,24 @@
             :typescript {:alpha 0}
             :soundscript {:alpha 0}
             :flow {:alpha 0}}
+   :coffeescript {:alpha 0
+                  :angle 0
+                  :radar {:alpha 0
+                          :offset 0}
+                  :r 900
+                  }
+   :dart {:alpha 0
+          :angle 0
+          :radar {:alpha 0
+                  :offset 0}
+          :r 1400
+                  }
+   :clojurescript {:alpha 0
+                   :angle 0
+                   :radar {:alpha 0
+                           :offset 0}
+                   :r 1900
+                  }
    })
 
 ;; Current state of the application.
@@ -399,6 +417,26 @@
 
     (restore!)))
 
+(defn draw-orbit!
+  [opts]
+  )
+
+(defn draw-radar!
+  [opts]
+  )
+
+(defn draw-coffeescript!
+  [opts]
+  )
+
+(defn draw-dart!
+  [opts]
+  )
+
+(defn draw-clojurescript!
+  [opts]
+  )
+
 ;;--------------------------------------------------------------------------------
 ;; Drawing
 ;;--------------------------------------------------------------------------------
@@ -431,6 +469,10 @@
   (draw-static! (:static @state))
 
   (draw-js-face! (:js-face @state))
+
+  (draw-coffeescript! (:coffeescript @state))
+  (draw-dart! (:dart @state))
+  (draw-clojurescript! (:clojurescript @state))
   
 
   (restore!))
@@ -637,6 +679,7 @@
               {:a :_ :b 1 :duration 1} [:static :sphere :alpha]
               {:a :_ :b 400 :duration 1} [:static :sphere :r])))
 
+     ;; show static language titles
      (let [angle (/ (* 2 PI) 3) ;; arc angle
            low 0.2]             ;; alpha of faded out title
        [;; show typescript
@@ -662,6 +705,37 @@
                  {:a :_ :b 1 :duration 1} [:static :soundscript :alpha]
                  {:a :_ :b (* 3 angle) :duration 1} [:static :sphere :angle]
                  )))])
+
+     ;; fade out staticsphere details
+     #(go
+        (<! (multi-animate!
+              {:a :_ :b 0 :duration 1} [:static :typescript :alpha]
+              {:a :_ :b 0 :duration 1} [:static :flow :alpha]
+              {:a :_ :b 0 :duration 1} [:static :soundscript :alpha]
+              {:a :_ :b 0 :duration 1} [:cam :x]
+              {:a :_ :b 0 :duration 1} [:static :sphere :angle]
+              {:a :_ :b 0 :duration 1} [:static :title :alpha]
+              {:a :_ :b 0.2 :duration 2} [:cam :zoom]
+              )))
+
+     ;; show coffeescript
+     #(go
+        (swap! state assoc :enable-orbits true)
+        (<! (multi-animate!
+              {:a :_ :b 1 :duration 1} [:coffeescript :alpha]
+              )))
+
+     ;; show dart
+     #(go
+        (<! (multi-animate!
+              {:a :_ :b 1 :duration 1} [:dart :alpha]
+              {:a :_ :b 0.1 :duration 1} [:cam :zoom])))
+
+     ;; show clojurescript
+     #(go
+        (<! (multi-animate!
+              {:a :_ :b 1 :duration 1} [:clojurescript :alpha]
+              {:a :_ :b 0.05 :duration 1} [:cam :zoom])))
 
      ])))
 
@@ -705,6 +779,13 @@
     (when-let [s (get @slide-states (dec (:slide @state)))]
       (reset! state s))))
 
+(defn skip-slide!
+  "Go to next slide skipping transitions if we can."
+  []
+  (when-not @in-transition?
+    (when-let [s (get @slide-states (inc (:slide @state)))]
+      (reset! state s))))
+
 (def key-names
   {37 :left
    38 :up
@@ -722,7 +803,9 @@
                (prev-slide!)
                (.preventDefault e))
       :right (do
-               (next-slide!)
+               (if shift
+                 (skip-slide!)
+                 (next-slide!))
                (.preventDefault e))
       nil)))
 
