@@ -444,30 +444,48 @@
     ))
 
 (defn draw-coffeescript!
-  [{:keys [alpha] :as opts}]
+  [{:keys [alpha highlight] :as opts}]
   (when-not (zero? alpha)
     (save!)
     (global-alpha! alpha)
     (draw-orbit! opts)
     (draw-planet! opts)
+    (when highlight
+      (font! "100 200px Roboto")
+      (text-baseline! "middle")
+      (text-align! "center")
+      (fill-style! "#566")
+      (fill-text! "COFFEESCRIPT" 0 -1400))
     (restore!)))
 
 (defn draw-dart!
-  [{:keys [alpha] :as opts}]
+  [{:keys [alpha highlight] :as opts}]
   (when-not (zero? alpha)
     (save!)
     (global-alpha! alpha)
     (draw-orbit! opts)
     (draw-planet! opts)
+    (when highlight
+      (font! "100 200px Roboto")
+      (text-baseline! "middle")
+      (text-align! "center")
+      (fill-style! "#DEE")
+      (fill-text! "DART" 0 -1700))
     (restore!)))
 
 (defn draw-clojurescript!
-  [{:keys [alpha] :as opts}]
+  [{:keys [alpha highlight] :as opts}]
   (when-not (zero? alpha)
     (save!)
     (global-alpha! alpha)
     (draw-orbit! opts)
     (draw-planet! opts)
+    (when highlight
+      (font! "100 300px Roboto")
+      (text-baseline! "middle")
+      (text-align! "center")
+      (fill-style! "#DEE")
+      (fill-text! "CLOJURESCRIPT" 3800 0))
     (restore!)))
 
 ;;--------------------------------------------------------------------------------
