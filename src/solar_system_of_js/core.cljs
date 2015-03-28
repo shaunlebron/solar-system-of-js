@@ -234,11 +234,19 @@
   (cond-> tween
     (keyword? tween) tweens))
 
+(defn resolve-callback
+  "If the callback is a state path, create the callback to set that path."
+  [callback]
+  (if-let [path (when (vector? callback) callback)]
+    #(swap! state assoc-in path %)
+    callback))
+
 (defn animate!
   "Pass given animation values to the given callback.
    Returns a channel that closes when done."
   [{:keys [a b duration tween] :or {tween :swing} :as opts} callback]
   (let [tween (resolve-tween tween)
+        callback (resolve-callback callback)
         c (chan)
         dv (- b a)]
     (tap tick-tap c)
@@ -268,47 +276,32 @@
 ;; Slide Animations
 ;;--------------------------------------------------------------------------------
 
-(defn go-go-slide1!
-  []
-  (go
-    (<! (multi-animate!
-          {:a 900 :b 0 :duration 1}
-           #(swap! state assoc-in [:js-face :x] %)
-           {:a 1 :b 0 :duration 0.4}
-           #(swap! state assoc-in [:title :alpha] %)
-           ))))
-
-(defn go-go-slide2!
-  []
-  (go
-    (<! (multi-animate!
-          {:a 0 :b -600 :duration 2}
-          #(swap! state assoc-in [:js-face :y] %)
-          {:a 0 :b 600 :duration 2}
-          #(swap! state assoc-in [:js-face :x] %)
-          {:a 0 :b (* 2 PI) :duration 2}
-          #(swap! state assoc-in [:js-face :angle] %)
-          {:a 1 :b 0 :duration 2}
-          #(swap! state assoc-in [:js-face :alpha] %)
-          {:a 0 :b 1 :duration 1}
-          #(swap! state assoc-in [:js-core :alpha] %)
-          {:a 1 :b 2 :duration 2}
-          #(swap! state assoc-in [:cam :zoom] %)
-          ))))
-
-;;--------------------------------------------------------------------------------
-;; Slide Control
-;;--------------------------------------------------------------------------------
-
 (def slide-actions
   "Actions to take for each slide."
-  [nil
-   go-go-slide1!
-   go-go-slide2!
+  [nil ;; no action for first slide
+   #(go
+      (<! (multi-animate!
+            {:a 900 :b 0 :duration 1} [:js-face :x]
+            {:a 1 :b 0 :duration 0.4} [:title :alpha]
+            )))
+   #(go
+      (<! (multi-animate!
+            {:a 0 :b 400 :duration 2} [:cam :x]
+            {:a 0 :b -600 :duration 2} [:js-face :y]
+            {:a 0 :b 600 :duration 2} [:js-face :x]
+            {:a 0 :b (* 2 PI) :duration 2} [:js-face :angle]
+            {:a 1 :b 0 :duration 2} [:js-face :alpha]
+            {:a 0 :b 1 :duration 1} [:js-core :alpha]
+            {:a 1 :b 2 :duration 2} [:cam :zoom]
+            )))
    ])
 
 (def num-slides
   (count slide-actions))
+
+;;--------------------------------------------------------------------------------
+;; Slide Control
+;;--------------------------------------------------------------------------------
 
 ;; Saved slide states, so we can revisit previous slides.
 (defonce slide-states
