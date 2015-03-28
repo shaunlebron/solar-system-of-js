@@ -320,18 +320,30 @@
     )
   (restore!))
 
-(defn draw-typescript!
-  [{:keys [alpha]}]
+(defn draw-static-text!
+  [{:keys [alpha]} text y]
   (when-not (zero? alpha)
-    nil))
+    (save!)
+    (global-alpha! alpha)
+    (text-baseline! "middle")
+    (text-align! "left")
+    (font! "100 100px Roboto")
+    (fill-style! "#FFF")
+    (fill-text! text 800 y)
+    (restore!)))
 
-(defn draw-soundscript!
+(defn draw-typescript!
   [opts]
-  )
+  (draw-static-text! opts "TYPESCRIPT" 0))
 
 (defn draw-flow!
   [opts]
-  )
+  (draw-static-text! opts "FLOW" 100))
+
+(defn draw-soundscript!
+  [opts]
+  (draw-static-text! opts "SOUNDSCRIPT" 200))
+
 
 (defn draw-staticsphere!
   [{:keys [angle alpha r]}]
@@ -341,7 +353,7 @@
     (circle! 0 0 r)
     (fill-style! "#BCC")
     (fill!)
-    
+
     ;; draw the arc
     (let [a (/ PI 2)
           da (/ (* 2 PI) 3)
@@ -625,7 +637,8 @@
               {:a :_ :b 1 :duration 1} [:static :sphere :alpha]
               {:a :_ :b 400 :duration 1} [:static :sphere :r])))
 
-     (let [angle (/ (* 2 PI) 3)]
+     (let [angle (/ (* 2 PI) 3) ;; arc angle
+           low 0.2]             ;; alpha of faded out title
        [;; show typescript
         #(go
            (<! (multi-animate!
@@ -636,16 +649,16 @@
 
         ;; show flow
         #(go
+           (swap! state assoc-in [:static :typescript :alpha] low)
            (<! (multi-animate!
                  {:a :_ :b 1 :duration 1} [:static :flow :alpha]
-                 {:a :_ :b 0.5 :duration 1} [:static :typescript :alpha]
                  {:a :_ :b (* 2 angle) :duration 1} [:static :sphere :angle]
                  )))
 
         ;; show soundscript
         #(go
+           (swap! state assoc-in [:static :flow :alpha] low)
            (<! (multi-animate!
-                 {:a :_ :b 0.5 :duration 1} [:static :flow :alpha]
                  {:a :_ :b 1 :duration 1} [:static :soundscript :alpha]
                  {:a :_ :b (* 3 angle) :duration 1} [:static :sphere :angle]
                  )))])
