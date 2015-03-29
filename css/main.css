@@ -1,0 +1,12 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,700);
+
+body {
+  background: #222;
+  margin: 0;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+}
