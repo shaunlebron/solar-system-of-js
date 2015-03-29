@@ -951,6 +951,7 @@
 (defn on-swipe!
   [type-]
   (case type-
+    "tap" (next-slide!)
     "swipeleft" (next-slide!)
     "swiperight" (prev-slide!)
     nil))
@@ -958,7 +959,7 @@
 (defn init-touch!
   []
   (doto (js/Hammer. canvas)
-    (.on "swipeleft swiperight"
+    (.on "swipeleft swiperight tap"
       #(on-swipe! (aget % "type")))))
 
 ;;--------------------------------------------------------------------------------
