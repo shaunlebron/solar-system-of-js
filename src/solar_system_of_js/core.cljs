@@ -1,10 +1,8 @@
 (ns solar-system-of-js.core
-
   (:require-macros
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
-    [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]
-    [figwheel.client :as fw]))
+    [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]))
 
 (enable-console-print!)
 
@@ -953,7 +951,4 @@
 
 ;; start when ready
 (.addEventListener js/window "load" main)
-
-;; start figwheel
-(fw/start {})
 

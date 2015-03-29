@@ -25,7 +25,7 @@
 
   :cljsbuild {
     :builds [{:id "dev"
-              :source-paths ["src"]
+              :source-paths ["src" "src-dev"]
               :compiler {
                 :output-to "resources/public/js/solar_system_of_js.js"
                 :output-dir "resources/public/js/out"
