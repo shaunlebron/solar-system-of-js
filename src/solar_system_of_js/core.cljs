@@ -2,6 +2,7 @@
   (:require-macros
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
+    cljsjs.hammer
     [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]))
 
 (enable-console-print!)
@@ -947,6 +948,18 @@
                (.preventDefault e))
       nil)))
 
+(defn on-swipe!
+  [type-]
+  (case type-
+    "swipeleft" (next-slide!)
+    "swiperight" (prev-slide!)
+    nil))
+
+(defn init-touch!
+  []
+  (doto (js/Hammer. canvas)
+    (.on "swipeleft swiperight"
+      #(on-swipe! (aget evt "type")))))
 
 ;;--------------------------------------------------------------------------------
 ;; Entry
@@ -957,6 +970,9 @@
 
   ;; initialize drawing canvas
   (init-canvas!)
+
+  ;; add touch swipe events for mobile users
+  (init-touch!)
 
   ;; start animation heartbeat
   (.requestAnimationFrame js/window tick!)

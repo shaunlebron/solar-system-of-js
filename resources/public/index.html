@@ -1,15 +1,19 @@
+<!doctype html>
 <html>
   <head>
     <title>Solar System of JS</title>
     <link rel="stylesheet" href="css/main.css" type="text/css">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
   </head>
-    <body>
+  <body>
     <img id="jsLogo" src="js.svg" style="display: none">
-    <canvas id="canvas"></canvas>
-        <script src="js/out/goog/base.js"></script>
-        <script src="js/solar_system_of_js.js"></script>
-        <script>
-          goog.require("solar_system_of_js.dev");
-        </script>
-    </body>
+    <div id="container">
+      <canvas id="canvas"></canvas>
+    </div>
+    <script src="js/out/goog/base.js"></script>
+    <script src="js/solar_system_of_js.js"></script>
+    <script>
+      goog.require("solar_system_of_js.dev");
+    </script>
+  </body>
 </html>

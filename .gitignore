@@ -14,3 +14,5 @@ resources/public/js/out-adv
 resources/public/js/*.js
 
 *.swp
+
+hosted/
