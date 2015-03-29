@@ -139,6 +139,10 @@
 (defn text-baseline! [x] (aset ctx "textBaseline" x))
 (defn line-width! [x] (aset ctx "lineWidth" x))
 (defn line-cap! [x] (aset ctx "lineCap" x))
+(defn draw-image!
+  ([img dx dy] (.drawImage ctx img dx dy))
+  ([img dx dy dWidth dHeight] (.drawImage ctx img dx dy dWidth dHeight))
+  ([img sx sy sWidth sHeight dx dy dWidth dHeight] (.drawImage ctx img sx sy sWidth sHeight dx dy dWidth dHeight)))
 
 ;;--------------------------------------------------------------------------------
 ;; Slide Drawings
@@ -164,6 +168,8 @@
   (restore!)
   )
 
+(def js-logo (.getElementById js/document "jsLogo"))
+
 (defn draw-js-face!
   [{:keys [x y r angle alpha]}]
   (save!)
@@ -174,12 +180,16 @@
   (fill-style! "#f7df1e")
   (fill!)
 
-  (font! "bold 150px Neutra Text")
-  (text-align! "center")
-  (text-baseline! "middle")
-  (fill-style! "#222")
-  (let [off 60]
-    (fill-text! "JS" off off))
+  (let [off -100
+        size 240]
+    (draw-image! js-logo off off size size))
+  
+  ;; (font! "bold 150px Neutra Text")
+  ;; (text-align! "center")
+  ;; (text-baseline! "middle")
+  ;; (fill-style! "#222")
+  ;; (let [off 60]
+  ;;   (fill-text! "JS" off off))
 
   (restore!))
 
