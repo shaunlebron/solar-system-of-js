@@ -959,7 +959,7 @@
   []
   (doto (js/Hammer. canvas)
     (.on "swipeleft swiperight"
-      #(on-swipe! (aget evt "type")))))
+      #(on-swipe! (aget % "type")))))
 
 ;;--------------------------------------------------------------------------------
 ;; Entry
