@@ -153,6 +153,14 @@
   (text-baseline! "middle")
   (fill-style! "#DDD")
   (fill-text! "Solar System of JS" x y)
+
+  (fill-style! "#566")
+  (font! "100 40px Roboto")
+  (fill-text! "visualizing the state of the JS platform" x (+ 120 y))
+
+  (fill-style! "#666")
+  (font! "100 30px Roboto")
+  (fill-text! "@shaunlebron - Space City JS 2015" x (+ 200 y))
   (restore!)
   )
 
