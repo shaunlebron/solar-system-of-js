@@ -938,6 +938,9 @@
   (let [kname (key-name e)
         shift (.-shiftKey e)]
     (case kname
+      :space (do
+               (next-slide!)
+               (.preventDefault e))
       :left  (do
                (prev-slide!)
                (.preventDefault e))
