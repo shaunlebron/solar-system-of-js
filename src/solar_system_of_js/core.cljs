@@ -22,7 +22,7 @@
   "Initial state of the application."
   {:slide 0
    :title {:x 0
-           :y 0
+           :y -100
            :alpha 1}
    :cam {:x 0
          :y 0
