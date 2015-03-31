@@ -1,4 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,300,700);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 body {
   background: #222;
@@ -16,14 +17,26 @@ body, html {
   display: -webkit-flex;     /* NEW - Chrome */
   display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
 
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  align-content: center;
   height: 100%;
   width: 100%;
 }
 
-canvas {
+#canvas {
   max-width: 100%;
   display: block;
   margin: auto;
+}
+
+#caption {
+  font: 16px "Open Sans";
+  margin: 2px auto;
+  padding: 20px 40px;
+  width: 900px;
+  color: #AAA;
+  border-top: 1px solid #777;
+  background: #222;
 }

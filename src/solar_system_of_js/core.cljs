@@ -22,6 +22,7 @@
 (def initial-state
   "Initial state of the application."
   {:slide 0
+   :caption ""
    :title {:x 0
            :y -100
            :alpha 1}
@@ -91,6 +92,13 @@
 ;; Current state of the application.
 (defonce state
   (atom initial-state))
+
+(def caption-element (.getElementById js/document "caption"))
+
+(add-watch state :caption-watcher
+  (fn [_key _atom {old-caption :caption} {new-caption :caption}]
+    (when (not= old-caption new-caption)
+      (aset caption-element "innerHTML" new-caption))))
 
 ;;--------------------------------------------------------------------------------
 ;; Canvas
