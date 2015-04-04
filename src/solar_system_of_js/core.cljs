@@ -100,6 +100,7 @@
 (add-watch state :caption-watcher
   (fn [_key _atom {old-caption :caption} {new-caption :caption}]
     (when (not= old-caption new-caption)
+      (aset caption-element "style" "opacity" "1")
       (aset caption-element "innerHTML" new-caption))))
 
 ;;--------------------------------------------------------------------------------

@@ -10,6 +10,10 @@ body, html {
   height: 100%;
 }
 
+#jsLogo {
+  display: none;
+}
+
 #container {
   display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
   display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
@@ -34,7 +38,10 @@ body, html {
 }
 
 #caption {
-  font: 16px "Open Sans";
+  transition: opacity 1s;
+  opacity: 0;
+
+  font: 16px "Open Sans", Helvetica, sans-serif;
   margin: 0px auto;
   margin-bottom: 20px;
   padding: 20px 40px;
