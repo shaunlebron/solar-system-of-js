@@ -696,17 +696,20 @@
 (def slide-actions
   "Actions to take for each slide."
   (vec (flatten
-    [;; no action for first slide
+    [;; title slide
      (fn []
        (swap! state assoc :caption
-         (html [:div "Hello, I'm " [:a {:href "http://twitter.com/shaunlebron"} "@shaunlebron"] ". "
-                     "Let's visualize the JS platform!"])))
+         (html [:div "Hello, I'm " [:a {:href "http://twitter.com/shaunlebron"} "@shaunlebron"] ", "
+                     "and I made this for "
+                     [:a {:href "http://spacecityjs.com/"}
+                      "#spacecityjs"]
+                     " to help us visualize the current state of the JS platform."])))
 
      ;; slide in the JS logo
      #(go
         (swap! state assoc :caption
           (html [:div
-                 "This is JavaScript, the default choice for modern web development."]))
+                 "This is JavaScript, the default choice for modern web development, of course."]))
         (<! (multi-animate!
               {:a :_ :b 0 :duration 1} [:js-face :x]
               {:a :_ :b 0 :duration 0.4} [:title :alpha])))
@@ -715,7 +718,7 @@
      #(go
         (swap! state assoc :caption
           (html [:div
-                 "If we look inside JavaScript's history, we find that it is a multi-layered, growing language."]))
+                 "If we look inside JavaScript, we find that it is a multi-layered, growing language."]))
         (<! (multi-animate!
               {:a :_ :b 400 :duration 2} [:cam :x]
               {:a :_ :b -600 :duration 2} [:js-face :y]
@@ -732,29 +735,35 @@
         #(go
            (swap! state assoc :caption
                   (html [:div
-                         "At its core is ECMAScript3, which we consider the base version of JS supported by legacy browsers."]))
+                         "At its core is ES3, which we consider the base version of JS supported by legacy browsers."]))
            (<! (animate!
                  {:a :_ :b 1 :duration t} [:es-captions :es3 :alpha])))
         #(go
            (swap! state assoc :caption
                   (html [:div
-                         "ECMAScript5 was a conservative addition of new functions and a \"use strict\" mode."]))
+                         "ES4 was abandoned, but ES5 was a conservative addition with new functions and a "
+                         [:a {:href "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode"
+                              :target "_blank"}
+                          "\"use strict\""]
+                        " mode."]))
            (<! (multi-animate!
                  {:a :_ :b low :duration t} [:es-captions :es3 :alpha]
                  {:a :_ :b 1 :duration t} [:es-captions :es5 :alpha])))
         #(go
            (swap! state assoc :caption
                   (html [:div
-                         "ECMAScript6 is the most recent and rather huge addition of syntax and concepts. "
-                         [:a {:href "https://github.com/lukehoban/es6features" :target "_blank"}
-                          "Read more here"]]))
+                         "ES6 is the current version, with a "
+                         [:a {:href "https://github.com/lukehoban/es6features"
+                              :target "_blank"}
+                          "rather huge"]
+                         " addition of syntax and concepts."]))
            (<! (multi-animate!
                  {:a :_ :b low :duration t} [:es-captions :es5 :alpha]
                  {:a :_ :b 1 :duration t} [:es-captions :es6 :alpha])))
         #(go
            (swap! state assoc :caption
                   (html [:div
-                         "ECMAScript7 is currently being worked on. "
+                         "ES7 is the next version which will include "
                          [:a {:href "http://www.html5rocks.com/en/tutorials/es7/observe/"
                               :target "_blank"}
                           "Object.observe"]
@@ -765,19 +774,18 @@
                          ", and "
                          [:a {:href "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Array_comprehensions"
                               :target "_blank"}
-                          "comprehensions"]
-                         " introduce very useful concepts."]))
+                          "comprehensions"]]))
            (<! (multi-animate!
                  {:a :_ :b low :duration t} [:es-captions :es6 :alpha]
                  {:a :_ :b 1 :duration t} [:es-captions :es7 :alpha])))
         #(go
            (swap! state assoc :caption
                   (html [:div
-                         "ECMAScript8 is even further away, but it may bring "
+                         "ES8 is even further away, but it may bring "
                          [:a {:href "http://www.2ality.com/2011/09/es6-8.html"
                               :target "_blank"}
                           "macros"]
-                         ", a powerful way to grow the syntax yourself."]))
+                         ", a powerful way to grow JS syntax yourself."]))
            (<! (multi-animate!
                  {:a :_ :b low :duration t} [:es-captions :es7 :alpha]
                  {:a :_ :b 1 :duration t} [:es-captions :es8 :alpha])))
@@ -787,7 +795,15 @@
      #(go
         (swap! state assoc :caption
                (html [:div
-                      "(to be continued...)"]))
+                      "We can't use all current & future JS features yet, but "
+                      [:a {:href "https://babeljs.io/"
+                           :target "_blank"}
+                       "Babel"]
+                      " or "
+                      [:a {:href "https://github.com/google/traceur-compiler"
+                           :target "_blank"}
+                       "Traceur"]
+                      " help alleviate this delay by transpiling to ES5."]))
         (swap! state assoc-in [:transpiler :highlight] true)
         (let [chans [(multi-animate!
                        {:a :_ :b 0 :duration 0.01} [:es-captions :es8 :alpha]
@@ -807,6 +823,17 @@
 
      ;; show linter
      #(go
+        (swap! state assoc :caption
+               (html [:div
+                      "To catch common JS gotchas or code convention deviations, we rely on linters like "
+                      [:a {:href "http://jshint.com/"
+                           :target "_blank"}
+                       "JSHint"]
+                      " or "
+                      [:a {:href "http://eslint.org/"
+                           :target "_blank"}
+                       "ESLint"]
+                      "."]))
         (swap! state assoc-in [:transpiler :highlight] false)
         (swap! state assoc-in [:linter :highlight] true)
         (<! (multi-animate!
@@ -816,6 +843,17 @@
 
      ;; show module sys
      #(go
+        (swap! state assoc :caption
+               (html [:div
+                      "For proper dependency loading, we need extra module tools like "
+                      [:a {:href "http://browserify.org/"
+                           :target "_blank"}
+                       "Browserify"]
+                      " or "
+                      [:a {:href "http://requirejs.org/"
+                           :target "_blank"}
+                       "RequireJS"]
+                      "."]))
         (swap! state assoc-in [:linter :highlight] false)
         (swap! state assoc-in [:modulesys :highlight] true)
         (<! (multi-animate!
@@ -825,6 +863,10 @@
 
      ;; put JS back together, showing it required tools
      #(go
+        (swap! state assoc :caption
+               (html [:div
+                      "Thus, modern JS has become married to a changing amalgam of tools required for its effective usage."
+                      ]))
         (swap! state assoc-in [:modulesys :highlight] false)
         (let [t 2]
           (<! (multi-animate!
@@ -845,6 +887,10 @@
 
      ;; show staticsphere
      #(go
+        (swap! state assoc :caption
+               (html [:div
+                      "(to be continued...)"
+                      ]))
         (<! (multi-animate!
               {:a :_ :b 0 :duration 1} [:transpiler :alpha]
               {:a :_ :b 0 :duration 1} [:linter :alpha]

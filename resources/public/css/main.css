@@ -30,12 +30,13 @@ body, html {
 }
 
 #canvas {
-  max-width: 1280px;
+  max-width: 100%;
 }
 
 #caption {
   font: 16px "Open Sans";
-  margin: 20px auto;
+  margin: 0px auto;
+  margin-bottom: 20px;
   padding: 20px 40px;
   max-width: 900px;
   color: #AAA;
