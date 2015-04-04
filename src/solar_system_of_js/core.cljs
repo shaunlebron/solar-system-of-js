@@ -874,7 +874,7 @@
      #(go
         (swap! state assoc :caption
                (html [:div
-                      "Thus, the modern view of JS development must include these tools as an effective foundation."
+                      "Thus, anyone using JS directly today must use some combination of these tools as foundation for the language."
                       ]))
         (swap! state assoc-in [:modulesys :highlight] false)
         (let [t 2]
@@ -940,7 +940,7 @@
                          [:a {:href "http://flowtype.org/"
                               :target "_blank"}
                           "Flow"]
-                         " will check for type safety as well, but even without type annotations."
+                         " will check for type safety as well, even for plain JS without type annotations."
                          ]))
            (swap! state assoc-in [:static :typescript :alpha] low)
            (<! (multi-animate!
@@ -952,11 +952,11 @@
         #(go
            (swap! state assoc :caption
                   (html [:div
-                         "Google uses its own "
+                         "Google makes heavy usage of its own "
                          [:a {:href "https://developers.google.com/closure/"
                               :target "_blank"}
                           "Closure Tools"]
-                         " to support "
+                         ", supporting "
                          [:a {:href "https://developers.google.com/closure/compiler/docs/js-for-compiler"
                               :target "_blank"}
                           "jsdoc tags"]
@@ -986,6 +986,10 @@
 
         ;; fade out staticsphere details
         #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "This is our simplified two-layer view of JS. We now leave the JS language for new worlds..."
+                         ]))
            (<! (multi-animate!
                  {:a :_ :b 0 :duration 1} [:static :typescript :alpha]
                  {:a :_ :b 0 :duration 1} [:static :flow :alpha]
@@ -999,6 +1003,9 @@
 
      ;; show coffeescript
      #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "(to be continued...)"]))
         (swap! state assoc :enable-orbits? true)
         (swap! state assoc-in [:radar :orbit] :coffeescript)
         (swap! state assoc-in [:coffeescript :highlight] true)
