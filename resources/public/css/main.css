@@ -17,7 +17,7 @@ body, html {
   display: -webkit-flex;     /* NEW - Chrome */
   display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
 
-  flex-wrap: wrap;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   align-content: center;
@@ -25,18 +25,25 @@ body, html {
   width: 100%;
 }
 
-#canvas {
-  max-width: 100%;
-  display: block;
+#canvas-wrapper {
   margin: auto;
+}
+
+#canvas {
+  max-width: 1280px;
 }
 
 #caption {
   font: 16px "Open Sans";
-  margin: 2px auto;
+  margin: 20px auto;
   padding: 20px 40px;
-  width: 900px;
+  max-width: 900px;
   color: #AAA;
-  border-top: 1px solid #777;
-  background: #222;
+  background: #444;
+  text-align: center;
+  border-radius: 5px;
+}
+
+#caption a {
+  color: #EEE;
 }

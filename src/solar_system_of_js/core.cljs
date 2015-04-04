@@ -1,8 +1,10 @@
 (ns solar-system-of-js.core
   (:require-macros
+    [hiccups.core :refer [html]]
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
     cljsjs.hammer
+    hiccups.runtime
     [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]))
 
 (enable-console-print!)
@@ -169,11 +171,8 @@
 
   (fill-style! "#566")
   (font! "100 40px Roboto")
-  (fill-text! "visualizing the state of the JS platform" x (+ 120 y))
+  (fill-text! "Space City JS - 28 March 2015" x (+ 120 y))
 
-  (fill-style! "#666")
-  (font! "100 30px Roboto")
-  (fill-text! "@shaunlebron - Space City JS 2015" x (+ 200 y))
   (restore!)
   )
 
@@ -698,16 +697,25 @@
   "Actions to take for each slide."
   (vec (flatten
     [;; no action for first slide
-     nil
+     (fn []
+       (swap! state assoc :caption
+         (html [:div "Hello, I'm " [:a {:href "http://twitter.com/shaunlebron"} "@shaunlebron"] ". "
+                     "Let's visualize the JS platform!"])))
 
      ;; slide in the JS logo
      #(go
+        (swap! state assoc :caption
+          (html [:div
+                 "This is JavaScript, the default choice for modern web development."]))
         (<! (multi-animate!
               {:a :_ :b 0 :duration 1} [:js-face :x]
               {:a :_ :b 0 :duration 0.4} [:title :alpha])))
 
      ;; peel back JS logo to see its layers
      #(go
+        (swap! state assoc :caption
+          (html [:div
+                 "If we look inside JavaScript's history, we find that it is a multi-layered, growing language."]))
         (<! (multi-animate!
               {:a :_ :b 400 :duration 2} [:cam :x]
               {:a :_ :b -600 :duration 2} [:js-face :y]
@@ -722,21 +730,54 @@
            low 0] ;; visited version alpha (faded out)
        [
         #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "At its core is ECMAScript3, which we consider the base version of JS supported by legacy browsers."]))
            (<! (animate!
                  {:a :_ :b 1 :duration t} [:es-captions :es3 :alpha])))
         #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "ECMAScript5 was a conservative addition of new functions and a \"use strict\" mode."]))
            (<! (multi-animate!
                  {:a :_ :b low :duration t} [:es-captions :es3 :alpha]
                  {:a :_ :b 1 :duration t} [:es-captions :es5 :alpha])))
         #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "ECMAScript6 is the most recent and rather huge addition of syntax and concepts. "
+                         [:a {:href "https://github.com/lukehoban/es6features" :target "_blank"}
+                          "Read more here"]]))
            (<! (multi-animate!
                  {:a :_ :b low :duration t} [:es-captions :es5 :alpha]
                  {:a :_ :b 1 :duration t} [:es-captions :es6 :alpha])))
         #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "ECMAScript7 is currently being worked on. "
+                         [:a {:href "http://www.html5rocks.com/en/tutorials/es7/observe/"
+                              :target "_blank"}
+                          "Object.observe"]
+                         ", "
+                         [:a {:href "http://code.tutsplus.com/tutorials/a-primer-on-es7-async-functions--cms-22367"
+                              :target "_blank"}
+                          "async"]
+                         ", and "
+                         [:a {:href "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Array_comprehensions"
+                              :target "_blank"}
+                          "comprehensions"]
+                         " introduce very useful concepts."]))
            (<! (multi-animate!
                  {:a :_ :b low :duration t} [:es-captions :es6 :alpha]
                  {:a :_ :b 1 :duration t} [:es-captions :es7 :alpha])))
         #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "ECMAScript8 is even further away, but it may bring "
+                         [:a {:href "http://www.2ality.com/2011/09/es6-8.html"
+                              :target "_blank"}
+                          "macros"]
+                         ", a powerful way to grow the syntax yourself."]))
            (<! (multi-animate!
                  {:a :_ :b low :duration t} [:es-captions :es7 :alpha]
                  {:a :_ :b 1 :duration t} [:es-captions :es8 :alpha])))
@@ -744,6 +785,9 @@
 
      ;; flash all layers and show transpiler
      #(go
+        (swap! state assoc :caption
+               (html [:div
+                      "(to be continued...)"]))
         (swap! state assoc-in [:transpiler :highlight] true)
         (let [chans [(multi-animate!
                        {:a :_ :b 0 :duration 0.01} [:es-captions :es8 :alpha]
@@ -991,6 +1035,10 @@
 
   ;; add controls
   (.addEventListener js/window "keydown" key-down)
+
+  ;; execute first slide action
+  (let [f (first slide-actions)]
+    (f))
 
   ;; save state of first slide
   (save-slide-state!))

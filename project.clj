@@ -6,6 +6,7 @@
                  [org.clojure/clojurescript "0.0-3058"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [figwheel "0.2.5"]
+                 [hiccups "0.3.0"]
                  [cljsjs/hammer "2.0.4-4"]]
 
   :node-dependencies [[source-map-support "0.2.8"]]
