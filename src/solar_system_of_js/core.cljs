@@ -65,6 +65,7 @@
                      :angle 0}
             :typescript {:alpha 0}
             :soundscript {:alpha 0}
+            :closure {:alpha 0}
             :flow {:alpha 0}}
    :coffeescript {:alpha 0
                   :size 50
@@ -382,11 +383,15 @@
 
 (defn draw-typescript!
   [opts]
-  (draw-static-text! opts "TYPESCRIPT" 0))
+  (draw-static-text! opts "TYPESCRIPT" -100))
 
 (defn draw-flow!
   [opts]
-  (draw-static-text! opts "FLOW" 100))
+  (draw-static-text! opts "FLOW" 0))
+
+(defn draw-closure!
+  [opts]
+  (draw-static-text! opts "CLOSURE" 100))
 
 (defn draw-soundscript!
   [opts]
@@ -404,30 +409,32 @@
 
     ;; draw the arc
     (let [a (/ PI 2)
-          da (/ (* 2 PI) 3)
-          start-a (+ a da)]
+          num-arcs 4
+          da (/ (* 2 PI) num-arcs)
+          start-a (+ a (* 2 da))]
 
       (draw-static-arc! start-a (+ start-a angle) "#FFF")
 
       ;; hack to grey out previously visited arcs
       (let [second-a (cond
+                       (> angle (* 3 da)) (* 3 da)
                        (> angle (* 2 da)) (* 2 da)
                        (> angle da) da)]
-        (draw-static-arc! start-a (+ start-a second-a) "#CDD")))
+        (draw-static-arc! start-a (+ start-a second-a) "#CDD"))
 
-    ;; draw dividers
-    (when (= 1 alpha)
-      (line-width! 24)
-      (stroke-style! "#BCC")
-      (let [r (-> @state :static :sphere :r)]
-        (dotimes [i 3]
-          (stroke-line! 0 0 0 r)
-          (rotate! (/ (* 2 PI) 3)))))
+      ;; draw dividers
+      (when (= 1 alpha)
+        (line-width! 24)
+        (stroke-style! "#BCC")
+        (let [r (-> @state :static :sphere :r)]
+          (dotimes [i num-arcs]
+            (stroke-line! 0 0 0 r)
+            (rotate! da)))))
     )
   (restore!))
 
 (defn draw-static!
-  [{:keys [title sphere angle typescript soundscript flow]}]
+  [{:keys [title sphere angle typescript soundscript flow closure]}]
   (when-not (zero? (:alpha sphere))
     (save!)
 
@@ -444,6 +451,7 @@
     (draw-typescript! typescript)
     (draw-soundscript! soundscript)
     (draw-flow! flow)
+    (draw-closure! closure)
 
     (restore!)))
 
@@ -796,7 +804,7 @@
      #(go
         (swap! state assoc :caption
                (html [:div
-                      "We can't use all current & future JS features yet, but "
+                      "But current/future JS features are not yet available. "
                       [:a {:href "https://babeljs.io/"
                            :target "_blank"}
                        "Babel"]
@@ -804,7 +812,7 @@
                       [:a {:href "https://github.com/google/traceur-compiler"
                            :target "_blank"}
                        "Traceur"]
-                      " help alleviate this delay by transpiling to ES5."]))
+                      " help alleviate this by transpiling to ES5."]))
         (swap! state assoc-in [:transpiler :highlight] true)
         (let [chans [(multi-animate!
                        {:a :_ :b 0 :duration 0.01} [:es-captions :es8 :alpha]
@@ -826,7 +834,7 @@
      #(go
         (swap! state assoc :caption
                (html [:div
-                      "To catch common JS gotchas or code convention deviations, we rely on linters like "
+                      "Also, to catch common JS language gotchas in our code, we rely on linters like "
                       [:a {:href "http://jshint.com/"
                            :target "_blank"}
                        "JSHint"]
@@ -846,7 +854,7 @@
      #(go
         (swap! state assoc :caption
                (html [:div
-                      "For proper dependency loading, we need extra module tools like "
+                      "And for proper dependency loading, we need extra module tools like "
                       [:a {:href "http://browserify.org/"
                            :target "_blank"}
                        "Browserify"]
@@ -866,7 +874,7 @@
      #(go
         (swap! state assoc :caption
                (html [:div
-                      "Thus, modern JS has become married to a changing amalgam of tools required for its effective usage."
+                      "Thus, the modern view of JS development must include these tools as an effective foundation."
                       ]))
         (swap! state assoc-in [:modulesys :highlight] false)
         (let [t 2]
@@ -890,7 +898,7 @@
      #(go
         (swap! state assoc :caption
                (html [:div
-                      "(to be continued...)"
+                      "There are even several attempts to extend JS for extra type safety and optimization."
                       ]))
         (<! (multi-animate!
               {:a :_ :b 0 :duration 1} [:transpiler :alpha]
@@ -905,10 +913,19 @@
               {:a :_ :b 400 :duration 1} [:static :sphere :r])))
 
      ;; show static language titles
-     (let [angle (/ (* 2 PI) 3) ;; arc angle
-           low 0.2]             ;; alpha of faded out title
+     (let [num-arcs 4
+           angle (/ (* 2 PI) num-arcs) ;; arc angle
+           low 0.2]                    ;; alpha of faded out title
        [;; show typescript
         #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "Microsoft's "
+                         [:a {:href "http://www.typescriptlang.org/"
+                              :target "_blank"}
+                          "TypeScript"]
+                         " extends ES6 with optional type annotation syntax and interfaces."
+                         ]))
            (<! (multi-animate!
                  {:a :_ :b 300 :duration 1} [:cam :x]
                  {:a :_ :b 1 :duration 1} [:static :typescript :alpha]
@@ -917,31 +934,68 @@
 
         ;; show flow
         #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "Facebook's "
+                         [:a {:href "http://flowtype.org/"
+                              :target "_blank"}
+                          "Flow"]
+                         " will check for type safety as well, but even without type annotations."
+                         ]))
            (swap! state assoc-in [:static :typescript :alpha] low)
            (<! (multi-animate!
                  {:a :_ :b 1 :duration 1} [:static :flow :alpha]
                  {:a :_ :b (* 2 angle) :duration 1} [:static :sphere :angle]
                  )))
 
-        ;; show soundscript
+        ;; show closure
         #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "Google uses its own "
+                         [:a {:href "https://developers.google.com/closure/"
+                              :target "_blank"}
+                          "Closure Tools"]
+                         " to support "
+                         [:a {:href "https://developers.google.com/closure/compiler/docs/js-for-compiler"
+                              :target "_blank"}
+                          "jsdoc tags"]
+                         " for aggressive type optimization."
+                         ]))
            (swap! state assoc-in [:static :flow :alpha] low)
            (<! (multi-animate!
-                 {:a :_ :b 1 :duration 1} [:static :soundscript :alpha]
+                 {:a :_ :b 1 :duration 1} [:static :closure :alpha]
                  {:a :_ :b (* 3 angle) :duration 1} [:static :sphere :angle]
-                 )))])
+                 )))
 
-     ;; fade out staticsphere details
-     #(go
-        (<! (multi-animate!
-              {:a :_ :b 0 :duration 1} [:static :typescript :alpha]
-              {:a :_ :b 0 :duration 1} [:static :flow :alpha]
-              {:a :_ :b 0 :duration 1} [:static :soundscript :alpha]
-              {:a :_ :b 0 :duration 1} [:cam :x]
-              {:a :_ :b 0 :duration 1} [:static :sphere :angle]
-              {:a :_ :b 0 :duration 1} [:static :title :alpha]
-              {:a :_ :b 0.2 :duration 2} [:cam :zoom]
-              )))
+        ;; show soundscript
+        #(go
+           (swap! state assoc :caption
+                  (html [:div
+                         "Google is also experimenting with "
+                         [:a {:href "https://developers.google.com/v8/experiments"
+                              :target "_blank"}
+                          "SoundScript"]
+                         ", a new \"use stricter+types\" mode for VM-level optimizations."
+                         ]))
+           (swap! state assoc-in [:static :closure :alpha] low)
+           (<! (multi-animate!
+                 {:a :_ :b 1 :duration 1} [:static :soundscript :alpha]
+                 {:a :_ :b (* 4 angle) :duration 1} [:static :sphere :angle]
+                 )))
+
+        ;; fade out staticsphere details
+        #(go
+           (<! (multi-animate!
+                 {:a :_ :b 0 :duration 1} [:static :typescript :alpha]
+                 {:a :_ :b 0 :duration 1} [:static :flow :alpha]
+                 {:a :_ :b 0 :duration 1} [:static :closure :alpha]
+                 {:a low :b 0 :duration 1} [:static :soundscript :alpha]
+                 {:a :_ :b 0 :duration 1} [:cam :x]
+                 {:a :_ :b 0 :duration 1} [:static :sphere :angle]
+                 {:a :_ :b 0 :duration 1} [:static :title :alpha]
+                 {:a :_ :b 0.2 :duration 2} [:cam :zoom]
+                 )))])
 
      ;; show coffeescript
      #(go
