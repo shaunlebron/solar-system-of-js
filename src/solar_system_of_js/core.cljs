@@ -818,9 +818,9 @@
                        {:a :_ :b 0 :duration 0.01} [:es-captions :es8 :alpha]
                        {:a :_ :b 200 :duration 1} [:cam :x]
                        {:a :_ :b 1.3 :duration 1} [:cam :zoom]
-                       {:a :_ :b 450 :duration 1} [:transpiler :x]
+                       {:a :_ :b 450 :duration 0.2} [:transpiler :x]
                        {:a :_ :b 1 :duration 1} [:transpiler :alpha]
-                       {:a :_ :b 1 :duration 1} [:transpiler :font-alpha]
+                       {:a :_ :b 1 :duration 0.1} [:transpiler :font-alpha]
                        )
                      (go
                        (<! (timeout 50))
@@ -847,8 +847,8 @@
         (swap! state assoc-in [:linter :highlight] true)
         (<! (multi-animate!
               {:a :_ :b 1 :duration 1} [:linter :alpha]
-              {:a :_ :b 1 :duration 1} [:linter :font-alpha]
-              {:a :_ :b 450 :duration 1} [:linter :x])))
+              {:a :_ :b 1 :duration 0.1} [:linter :font-alpha]
+              {:a :_ :b 450 :duration 0.2} [:linter :x])))
 
      ;; show module sys
      #(go
@@ -867,8 +867,8 @@
         (swap! state assoc-in [:modulesys :highlight] true)
         (<! (multi-animate!
               {:a :_ :b 1 :duration 1} [:modulesys :alpha]
-              {:a :_ :b 1 :duration 1} [:modulesys :font-alpha]
-              {:a :_ :b 450 :duration 1} [:modulesys :x])))
+              {:a :_ :b 1 :duration 0.1} [:modulesys :font-alpha]
+              {:a :_ :b 450 :duration 0.2} [:modulesys :x])))
 
      ;; put JS back together, showing it required tools
      #(go
