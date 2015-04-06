@@ -326,7 +326,7 @@
    ;; show soundscript
    {:caption
     (str "Google is also experimenting with [SoundScript](https://developers.google.com/v8/experiments),"
-         ", a new \"use stricter+types\" mode for VM-level optimizations.")
+         " a new \"use stricter+types\" mode for VM-level optimizations.")
     [:static :closure :alpha] static-low-alpha
     [:static :soundscript :alpha] {:a :_ :b 1 :duration 1}
     [:static :sphere :angle]      {:a :_ :b (* 4 static-angle) :duration 1}}
