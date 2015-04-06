@@ -167,7 +167,7 @@
 
    ;; slide in the JS logo
    {:caption
-    "This is JavaScript, the default choice for modern web development, of course."
+    "This is JavaScript, the one and only programming language that today's browsers understand."
     [:js-face :x]   {:a :_ :b 0 :duration 1}
     [:title :alpha] {:a :_ :b 0 :duration 0.4}}
 
@@ -252,7 +252,10 @@
    ;; show module sys
    {:caption
     (str "And for proper dependency loading, we need extra module tools like"
-         " [Browserify](http://browserify.org/) or [RequireJS](http://requirejs.org/).")
+         " [Browserify](http://browserify.org/),"
+         " [webpack](http://webpack.github.io/),"
+         " [SystemJS](https://github.com/systemjs/systemjs),"
+         " [RequireJS](http://requirejs.org/), etc.")
 
     [:linter :highlight] false
     [:modulesys :highlight] true
@@ -329,7 +332,7 @@
 
    ;; fade out staticsphere details
    {:caption
-    "This is our simplified two-layer view of JS. We now leave the JS language for new worlds."
+    "There are also languages that are completely separate from JS, but still compile to it."
     [:static :typescript :alpha]  {:a :_ :b 0 :duration 1}
     [:static :flow :alpha]        {:a :_ :b 0 :duration 1}
     [:static :closure :alpha]     {:a :_ :b 0 :duration 1}
@@ -341,21 +344,23 @@
 
    ;; show coffeescript
    {:caption
-    "(to be continued...)"
+    "[CoffeeScript](http://coffeescript.org/) is separate from JS but remains close.  Its simpler syntax and idioms have influenced features in ES6."
     :enable-orbits? true
     [:radar :orbit] :coffeescript
     [:coffeescript :highlight] true
     [:coffeescript :alpha] {:a :_ :b 1 :duration 1}}
 
    ;; show dart
-   {
+   {:caption
+    "[Dart](https://www.dartlang.org/) is larger. It embraces OOP with optional typing, a large core library, and development tools."
     [:coffeescript :highlight] false
     [:dart :highlight] true
     [:radar :orbit] :dart
     [:dart :alpha] {:a :_ :b 1 :duration 1}}
 
    ;; show clojurescript
-   {
+   {:caption
+    "[ClojureScript](http://clojurescript.org) eschews traditional OO in favor of immutability, plain data, and a more expressive syntax."
     [:dart :highlight] false
     [:clojurescript :highlight] true
     [:clojurescript :angle] (- (/ PI 10))
@@ -365,6 +370,10 @@
     [:cam :y]               {:a :_ :b 0 :duration 1}
     [:cam :x]               {:a :_ :b 300 :duration 1}
     [:cam :zoom]            {:a :_ :b 0.15 :duration 1}}
+
+   ;; TODO: read about elm
+   ;; TODO: read about purescript
+
 ]))
 
 ;;----------------------------------------------------------------------
