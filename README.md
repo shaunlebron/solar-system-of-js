@@ -1,23 +1,28 @@
-# solar-system-of-js
+# Solar System of JS
 
-Trying to visualize the current state of Javascript development:
+[Visual presentation](http://shaunlebron.github.io/solar-system-of-js/) of the state of JavaScript development, as of March 2015...
 
-- Building on the core:
-  - JS (ES3)
-    - with linters (jshint, jslint)
-    - with ES5 strict-mode ("use strict";)
-  - ES6
-  - The static typing layers:
-    - TypeScript (Microsoft)
-    - Flow (Facebook)
-    - SoundScript (Google)
+[![preview](preview.gif)](http://shaunlebron.github.io/solar-system-of-js/)
 
-- In orbit:
-  - CoffeeScript
-  - Dart
+## Implementation
 
-- In far orbit:
-  - ClojureScript
+The presentation is written in ClojureScript, visuals in Canvas2D api.
+
+Each slide transition is driven by an [actions spec](https://github.com/shaunlebron/solar-system-of-js/blob/master/src/solar_system_of_js/actions.cljs#L160)
+to animate state data, which is then drawn by the [draw functions](https://github.com/shaunlebron/solar-system-of-js/blob/master/src/solar_system_of_js/draw.cljs#L41).
+`core.async` is used for all timing/animation.
+
+- `actions.cljs` - slide transition state actions
+- `animate.cljs` - animation utility (using core.async go-blocks)
+- `canvas.cljs` - canvas initialization and api wrapper
+- `caption.cljs` - caption setter in markdown
+- `control.cljs` - touch/key controls
+- `core.cljs` - entry point
+- `draw.cljs` - all drawing functions
+- `math.cljs` - math aliases
+- `nav.cljs` - slide navigation functions (next/previous)
+- `state.cljs` - state of the application
+- `tick.cljs` - heartbeat of the application
 
 ## Setup
 
