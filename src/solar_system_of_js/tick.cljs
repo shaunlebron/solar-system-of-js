@@ -1,7 +1,6 @@
 (ns solar-system-of-js.tick
   (:require
     [cljs.core.async :refer [put! mult chan]]
-    [solar-system-of-js.actions :refer [tick-actions!]]
     [solar-system-of-js.draw :refer [draw!]]))
 
 (def tick-chan
@@ -25,7 +24,6 @@
                    (/ 1000 60))
         dt (/ delta-ms 1000)]
     (set! prev-time curr-time)
-    (put! tick-chan dt)
-    (tick-actions! dt))
+    (put! tick-chan dt))
   (.requestAnimationFrame js/window tick!))
 

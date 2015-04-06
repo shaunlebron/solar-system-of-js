@@ -4,7 +4,8 @@
     [solar-system-of-js.control :refer [init-controls!]]
     [solar-system-of-js.tick :refer [tick!]]
     [solar-system-of-js.actions :refer [slide-actions
-                                        skip-action!]]
+                                        skip-action!
+                                        start-loops!]]
     [solar-system-of-js.nav :refer [save-slide-state!]]
     solar-system-of-js.caption
     ))
@@ -28,7 +29,10 @@
     (skip-action! action))
 
   ;; save state of first slide
-  (save-slide-state!))
+  (save-slide-state!)
+
+  (start-loops!)
+  )
 
 ;; start when ready
 (.addEventListener js/window "load" main)

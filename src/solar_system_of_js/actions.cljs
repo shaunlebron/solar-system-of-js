@@ -5,6 +5,7 @@
     [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]
     [solar-system-of-js.state :refer [state]]
     [solar-system-of-js.animate :refer [multi-animate!]]
+    [solar-system-of-js.tick :refer [tick-tap]]
     [solar-system-of-js.math :refer [PI]]))
 
 ;; When we change slides, there can be multiple actions to perform.
@@ -397,7 +398,12 @@
   (when (:enable-orbits? @state)
     (swap! state update-in [:radar :offset] + (* dt 400))))
 
-(defn tick-actions!
-  [dt]
-  (tick-orbits! dt)
-  (tick-radar! dt))
+(defn start-loops!
+  []
+  (let [c (chan)]
+    (tap tick-tap c)
+    (go-loop []
+      (let [dt (<! c)]
+        (tick-orbits! dt)
+        (tick-radar! dt))
+      (recur))))
