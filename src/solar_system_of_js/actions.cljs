@@ -228,7 +228,7 @@
     [:cam :x]                  {:a :_ :b 200 :duration 1}
     [:cam :zoom]               {:a :_ :b 1.3 :duration 1}
     [:transpiler :x]           {:a :_ :b 450 :duration 0.2}
-    [:transpiler :alpha]       {:a :_ :b 1 :duration 1}
+    [:transpiler :alpha]       {:a :_ :b 1 :duration 0.2}
     [:transpiler :font-alpha]  {:a :_ :b 1 :duration 0.1}
 
     :highlight-layer
@@ -246,7 +246,7 @@
 
     [:transpiler :highlight] false
     [:linter :highlight] true
-    [:linter :alpha]      {:a :_ :b 1 :duration 1}
+    [:linter :alpha]      {:a :_ :b 1 :duration 0.2}
     [:linter :font-alpha] {:a :_ :b 1 :duration 0.1}
     [:linter :x]          {:a :_ :b 450 :duration 0.2}}
 
@@ -261,7 +261,7 @@
     [:linter :highlight] false
     [:modulesys :highlight] true
 
-    [:modulesys :alpha]      {:a :_ :b 1 :duration 1}
+    [:modulesys :alpha]      {:a :_ :b 1 :duration 0.2}
     [:modulesys :font-alpha] {:a :_ :b 1 :duration 0.1}
     [:modulesys :x]          {:a :_ :b 450 :duration 0.2}}
 
@@ -299,7 +299,7 @@
    ;; show typescript
    {:caption
     (str "Microsoft's [TypeScript](http://www.typescriptlang.org/)"
-         " extends ES6 with optional type annotation syntax and interfaces.")
+         " extends ES6 with optional type annotation syntax and interfaces, and extra editor support.")
     [:cam :x]                    {:a :_ :b 300 :duration 1}
     [:static :typescript :alpha] {:a :_ :b 1 :duration 1}
     [:static :sphere :angle]     {:a :_ :b static-angle :duration 1}}
@@ -361,7 +361,7 @@
 
    ;; show clojurescript
    {:caption
-    "[ClojureScript](http://clojurescript.org) eschews traditional OO in favor of immutability, plain data, and a more expressive syntax."
+    "[ClojureScript](http://clojurescript.org) eschews imperative/OO in favor of immutability, plain data, and a more expressive syntax."
     [:dart :highlight] false
     [:clojurescript :highlight] true
     [:clojurescript :angle] (- (/ PI 10))
