@@ -1,8 +1,42 @@
-(ns solar-system-of-js.draw)
+(ns solar-system-of-js.draw
+  (:require
+    [solar-system-of-js.state :refer [state]]
+    [solar-system-of-js.canvas :refer [width height
+                                       fill-style!
+                                       stroke-style!
+                                       begin-path!
+                                       close-path!
+                                       translate!
+                                       scale!
+                                       rotate!
+                                       save!
+                                       restore!
+                                       fill-rect!
+                                       stroke-rect!
+                                       arc!
+                                       fill!
+                                       stroke!
+                                       circle!
+                                       move-to!
+                                       line-to!
+                                       stroke-line!
+                                       get-global-alpha
+                                       set-global-alpha
+                                       global-alpha!
+                                       font!
+                                       fill-text!
+                                       stroke-text!
+                                       text-align!
+                                       text-baseline!
+                                       line-width!
+                                       line-cap!
+                                       draw-image!]]
+    [solar-system-of-js.math :refer [PI cos sin]]))
 
-(def PI  (aget js/Math "PI"))
-(def cos (aget js/Math "cos"))
-(def sin (aget js/Math "sin"))
+
+;;--------------------------------------------------------------------------------
+;; Drawing Specific Objects
+;;--------------------------------------------------------------------------------
 
 (defn draw-title!
   [{:keys [x y alpha]}]
@@ -395,7 +429,7 @@
     (restore!)))
 
 ;;--------------------------------------------------------------------------------
-;; Main
+;; Drawing Dispatch
 ;;--------------------------------------------------------------------------------
 
 (defn set-cam!

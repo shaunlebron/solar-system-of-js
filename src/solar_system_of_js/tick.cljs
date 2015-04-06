@@ -1,6 +1,7 @@
 (ns solar-system-of-js.tick
   (:require
-    [cljs.core.async :refer [put! mult chan]]))
+    [cljs.core.async :refer [put! mult chan]]
+    [solar-system-of-js.draw :refer [draw!]]))
 
 (def tick-chan
   "This channel receives dt (delta time from last frame) in milliseconds."

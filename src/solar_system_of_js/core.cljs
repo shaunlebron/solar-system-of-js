@@ -3,7 +3,10 @@
     [solar-system-of-js.canvas :refer [init-canvas!]]
     [solar-system-of-js.control :refer [init-controls!]]
     [solar-system-of-js.tick :refer [tick!]]
-    [solar-system-of-js.actions :refer [slide-actions]]
+    [solar-system-of-js.actions :refer [slide-actions
+                                        skip-action!]]
+    [solar-system-of-js.nav :refer [save-slide-state!]]
+    solar-system-of-js.caption
     ))
 
 (enable-console-print!)
@@ -14,6 +17,7 @@
   ;; initialize drawing canvas
   (init-canvas!)
 
+  ;; initialize touch and key controls
   (init-controls!)
 
   ;; start animation heartbeat
@@ -21,8 +25,7 @@
 
   ;; execute first slide action
   (let [action (first slide-actions)]
-
-    (f))
+    (skip-action! action))
 
   ;; save state of first slide
   (save-slide-state!))

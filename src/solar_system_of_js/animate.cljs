@@ -3,7 +3,9 @@
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
     [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]
-    [solar-system-of-js.tick :refer [tick-tap]]))
+    [solar-system-of-js.tick :refer [tick-tap]]
+    [solar-system-of-js.state :refer [state]]
+    [solar-system-of-js.math :refer [PI cos]]))
 
 (def tweens
   "In-betweening animation functions."
@@ -46,7 +48,7 @@
   "Helper for concurrent animations with `animate!`.
    Returns a channel that closes when all are done."
   [pairs]
-  (let [anims (mapv #(apply animate! pairs))]
+  (let [anims (mapv #(apply animate! %) pairs)]
     (go
       (doseq [a anims]
         (<! a)))))

@@ -1,4 +1,6 @@
-(ns solar-system-of-js.canvas)
+(ns solar-system-of-js.canvas
+  (:require
+    [solar-system-of-js.math :refer [PI]]))
 
 (defonce canvas nil)
 (defonce ctx nil)

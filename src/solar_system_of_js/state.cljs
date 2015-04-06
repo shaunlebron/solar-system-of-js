@@ -1,6 +1,6 @@
-(ns solar-system-of-js.state)
-
-(def PI  (aget js/Math "PI"))
+(ns solar-system-of-js.state
+  (:require
+    [solar-system-of-js.math :refer [PI]]))
 
 (def initial-state
   "Initial state of the application."

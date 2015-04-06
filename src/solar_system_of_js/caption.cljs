@@ -14,7 +14,7 @@
 (defn set-caption!
   [caption]
   (aset caption-element "style" "opacity" "1")
-  (let [html (md->html new-caption)]
+  (let [html (md->html caption)]
     (aset caption-element "innerHTML" html))
   (-> (js/$ caption-element)
       (.find "a")

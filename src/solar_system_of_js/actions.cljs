@@ -4,7 +4,8 @@
   (:require
     [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]
     [solar-system-of-js.state :refer [state]]
-    [solar-system-of-js.animate :refer [multi-animate!]]))
+    [solar-system-of-js.animate :refer [multi-animate!]]
+    [solar-system-of-js.math :refer [PI]]))
 
 ;; When we change slides, there can be multiple actions to perform.
 ;;
@@ -49,11 +50,11 @@
    ;; ANIMATED SETTERS
    ;;---------------------------------------------------------
 
-   ;; animate :foo key in our app state from 0 to 1 over 2 seconds
-   :foo {:a 0 :b 1 :duration 2}  
+   ;; animate :foo1 key in our app state from 0 to 1 over 2 seconds
+   :foo1 {:a 0 :b 1 :duration 2}  
 
    ;; (same, but animate from whatever its current value is, indicated by ":_")
-   :foo {:a :_ :b 1 :duration 2}
+   :foo2 {:a :_ :b 1 :duration 2}
 
    ;;---------------------------------------------------------
    ;; CUSTOM ANIMATION
@@ -63,7 +64,7 @@
    ;; (Note that you must make this action SKIPPABLE by choosing the correct
    ;;  destination value "b" that our value will be set to when the go-block is finished.
    ;;  the source value "a" is ignored here.)
-   :foo {:a :_ :b 3
+   :foo3 {:a :_ :b 3
          :go-block #(go (doseq [x [1 2 3]]
                           (<! (timeout 100))
                           (swap! state assoc :foo x)))}
@@ -108,8 +109,8 @@
 ;;
 (defn animation? [[path value]] (:duration value))
 (defn custom?    [[path value]] (:go-block value))
-(defn immediate? [kv] (and (not (kv-animation? kv))
-                           (not (kv-custom? kv))))
+(defn immediate? [kv] (and (not (animation? kv))
+                           (not (custom? kv))))
 
 ;; Every action is skippable since they have a destination "b".
 ;; We can ignore the extra animation information if given.
@@ -131,10 +132,10 @@
 (defn animate-step!
   "Animate the given step concurrently."
   [step-map]
-  (let [_              (->> (map immediate? step-map) (skip-action!))
-        anim-chan      (->> (map animation? step-map) (multi-animate!))
-        go-block-chans (->> (map custom? step-map) (map second) (map #(%)) doall)
-        wait-chan      (cons anim-chan go-block-chans)]
+  (let [_              (->> (filter immediate? step-map) (skip-step!))
+        anim-chan      (->> (filter animation? step-map) (multi-animate!))
+        go-block-chans (->> (filter custom? step-map) (map second) (map :go-block) (mapv #(%)))
+        wait-chans     (cons anim-chan go-block-chans)]
     (go
       (doseq [c wait-chans]
         (<! c)))))
@@ -222,7 +223,7 @@
          " [Babel](https://babeljs.io/) or [Traceur](https://github.com/google/traceur-compiler)"
          " help alleviate this by transpiling to ES5.")
     [:transpiler :highlight] true
-    [:es-captions :es8 :alpha] 0.01
+    [:es-captions :es8 :alpha] 0
     [:cam :x]                  {:a :_ :b 200 :duration 1}
     [:cam :zoom]               {:a :_ :b 1.3 :duration 1}
     [:transpiler :x]           {:a :_ :b 450 :duration 0.2}

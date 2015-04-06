@@ -1,6 +1,9 @@
 (ns solar-system-of-js.nav
+  (:require-macros
+    [cljs.core.async.macros :refer [go go-loop]])
   (:require
-    [solar-system-of-js.actions :refer [slide-actions]]
+    [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]
+    [solar-system-of-js.actions :refer [slide-actions animate-action!]]
     [solar-system-of-js.state :refer [state]]))
 
 (def num-slides
@@ -29,7 +32,7 @@
       (swap! state update-in [:slide] inc)
       (reset! in-transition? true)
       (go
-        (<! (action))
+        (<! (animate-action! action))
         (reset! in-transition? false)))))
 
 (defn prev-slide!

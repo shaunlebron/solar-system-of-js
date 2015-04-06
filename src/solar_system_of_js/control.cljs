@@ -1,7 +1,8 @@
 (ns solar-system-of-js.control
   (:require
     [solar-system-of-js.actions :refer [slide-actions]]
-    [solar-system-of-js.nav :refer []]
+    [solar-system-of-js.nav :refer [skip-slide! next-slide! prev-slide!]]
+    [solar-system-of-js.canvas :refer [canvas]]
     cljsjs.hammer))
 
 (def key-names
@@ -43,7 +44,6 @@
   (doto (js/Hammer. canvas)
     (.on "swipeleft swiperight tap"
       #(on-swipe! (aget % "type")))))
-
 
 (defn init-controls!
   []
