@@ -388,3 +388,7 @@
   (when (:enable-orbits? @state)
     (swap! state update-in [:radar :offset] + (* dt 400))))
 
+(defn tick-actions!
+  [dt]
+  (tick-orbits! dt)
+  (tick-radar! dt))
