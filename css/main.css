@@ -25,6 +25,11 @@ body, html {
   justify-content: center;
   align-items: center;
   align-content: center;
+  -webkit-flex-direction: column;
+  -webkit-justify-content: center;
+  -webkit-align-items: center;
+  -webkit-align-content: center;
+
   height: 100%;
   width: 100%;
 }
