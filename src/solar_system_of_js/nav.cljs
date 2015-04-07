@@ -3,7 +3,7 @@
     [cljs.core.async.macros :refer [go]])
   (:require
     [cljs.core.async :refer [<!]]
-    [solar-system-of-js.actions :refer [slide-actions animate-action!]]
+    [solar-system-of-js.actions :refer [slide-actions animate-action! skip-action!]]
     [solar-system-of-js.state :refer [state]]))
 
 (def num-slides
@@ -43,9 +43,11 @@
       (reset! state s))))
 
 (defn skip-slide!
-  "Go to next slide skipping transitions if we can."
+  "Go to next slide, skipping any transitions."
   []
   (when-not @in-transition?
-    (when-let [s (get @slide-states (inc (:slide @state)))]
-      (reset! state s))))
+    (when-let [action (get slide-actions (inc (:slide @state)))]
+      (save-slide-state!)
+      (swap! state update-in [:slide] inc)
+      (skip-action! action))))
 
