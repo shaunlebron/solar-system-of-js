@@ -6,11 +6,9 @@
     [solar-system-of-js.canvas :refer [init-canvas!]]
     [solar-system-of-js.control :refer [init-controls!]]
     [solar-system-of-js.tick :refer [tick!]]
-    [solar-system-of-js.actions :refer [slide-actions
-                                        skip-action!
-                                        tick-orbits!
+    [solar-system-of-js.actions :refer [tick-orbits!
                                         tick-radar!]]
-    [solar-system-of-js.nav :refer [save-slide-state!]]
+    [solar-system-of-js.nav :refer [init-first-slide! sync-slide-to-hash!]]
     [solar-system-of-js.tick :refer [tick-tap]]
     [solar-system-of-js.draw :refer [draw!]]
     solar-system-of-js.caption
@@ -42,12 +40,10 @@
   ;; start animation heartbeat
   (.requestAnimationFrame js/window tick!)
 
-  ;; execute first slide action
-  (let [action (first slide-actions)]
-    (skip-action! action))
+  (init-first-slide!)
 
-  ;; save state of first slide
-  (save-slide-state!)
+  ;; go to slide listed in the url hash
+  (sync-slide-to-hash!)
 
   ;; start the main loop
   (start!))
