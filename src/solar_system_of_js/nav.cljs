@@ -1,8 +1,8 @@
 (ns solar-system-of-js.nav
   (:require-macros
-    [cljs.core.async.macros :refer [go go-loop]])
+    [cljs.core.async.macros :refer [go]])
   (:require
-    [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]
+    [cljs.core.async :refer [<!]]
     [solar-system-of-js.actions :refer [slide-actions animate-action!]]
     [solar-system-of-js.state :refer [state]]))
 

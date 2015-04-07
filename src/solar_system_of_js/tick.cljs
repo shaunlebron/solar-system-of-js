@@ -1,7 +1,6 @@
 (ns solar-system-of-js.tick
   (:require
-    [cljs.core.async :refer [put! mult chan]]
-    [solar-system-of-js.draw :refer [draw!]]))
+    [cljs.core.async :refer [put! mult chan]]))
 
 (def tick-chan
   "This channel receives dt (delta time from last frame) in milliseconds."
@@ -18,7 +17,6 @@
 (defn tick!
   "Creates heartbeat by hooking requestAnimationFrame to tick-chan."
   [curr-time]
-  (draw!)
   (let [delta-ms (if prev-time
                    (- curr-time prev-time)
                    (/ 1000 60))

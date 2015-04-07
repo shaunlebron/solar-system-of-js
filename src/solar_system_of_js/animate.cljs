@@ -2,7 +2,7 @@
   (:require-macros
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
-    [cljs.core.async :refer [put! take! <! >! timeout mult chan tap untap]]
+    [cljs.core.async :refer [<! chan tap untap]]
     [solar-system-of-js.tick :refer [tick-tap]]
     [solar-system-of-js.state :refer [state]]
     [solar-system-of-js.math :refer [PI cos]]))
