@@ -443,6 +443,7 @@
 
 (defn draw-progress!
   []
+  (save!)
   (let [i (:slide @state)
         end-i (dec num-slides)
         len (* width (/ i end-i))]
@@ -452,7 +453,8 @@
     (line-to! len 0)
     (line-width! 10)
     (stroke-style! "#ACC")
-    (stroke!)))
+    (stroke!))
+  (restore!))
 
 (defn draw!
   "Draw the current state of the application."

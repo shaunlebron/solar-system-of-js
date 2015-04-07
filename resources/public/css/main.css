@@ -63,7 +63,6 @@ body, html {
 
   font: 16px "Open Sans", Helvetica, sans-serif;
   margin: 20px auto;
-  margin-bottom: 20px;
   padding: 20px 40px;
   max-width: 900px;
   color: #AAA;
@@ -80,8 +79,7 @@ body, html {
 
 #github {
   font: 16px "Open Sans", Helvetica, sans-serif;
-  margin: 20px auto;
-  margin-bottom: 20px;
+  margin: 0px auto;
   padding: 20px 40px;
   max-width: 900px;
   color: #444;

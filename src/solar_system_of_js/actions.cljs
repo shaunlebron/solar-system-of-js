@@ -175,6 +175,7 @@
    {:caption
     "If we look inside JavaScript, we find that it is a multi-layered, growing language."
     [:cam :x]         {:a :_ :b 400 :duration 2}
+    [:cam :y]         {:a :_ :b -100 :duration 2}
     [:js-face :y]     {:a :_ :b -600 :duration 2}
     [:js-face :x]     {:a :_ :b 600 :duration 2}
     [:js-face :angle] {:a :_ :b (* 2 PI) :duration 2}
@@ -225,6 +226,7 @@
     [:transpiler :highlight] true
     [:es-captions :es8 :alpha] 0
     [:cam :x]                  {:a :_ :b 200 :duration 1}
+    [:cam :y]                  {:a :_ :b 0 :duration 1}
     [:cam :zoom]               {:a :_ :b 1.3 :duration 1}
     [:transpiler :x]           {:a :_ :b 450 :duration 0.2}
     [:transpiler :alpha]       {:a :_ :b 1 :duration 0.2}
