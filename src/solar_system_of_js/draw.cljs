@@ -1,6 +1,7 @@
 (ns solar-system-of-js.draw
   (:require
     [solar-system-of-js.state :refer [state]]
+    [solar-system-of-js.nav :refer [num-slides]]
     [solar-system-of-js.canvas :refer [width height
                                        fill-style!
                                        stroke-style!
@@ -440,6 +441,19 @@
   (scale! zoom zoom)
   (rotate! angle))
 
+(defn draw-progress!
+  []
+  (let [i (:slide @state)
+        end-i (dec num-slides)
+        len (* width (/ i end-i))]
+
+    (begin-path!)
+    (move-to! 0 0)
+    (line-to! len 0)
+    (line-width! 10)
+    (stroke-style! "#ACC")
+    (stroke!)))
+
 (defn draw!
   "Draw the current state of the application."
   []
@@ -467,5 +481,6 @@
   (draw-dart! (:dart @state))
   (draw-clojurescript! (:clojurescript @state))
 
-  (restore!))
+  (restore!)
+  (draw-progress!))
 
