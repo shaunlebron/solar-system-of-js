@@ -2,7 +2,8 @@
   (:require-macros
     [cljs.core.async.macros :refer [go]])
   (:require
-    [cljs.core.async :refer [<!]]
+    [cljs.core.async :refer [<! put!]]
+    [solar-system-of-js.animate :refer [cancel-chan]]
     [solar-system-of-js.actions :refer [slide-actions animate-action!]]
     [solar-system-of-js.state :refer [state]]))
 
@@ -26,7 +27,8 @@
 (defn next-slide!
   "Go to next slide if we can."
   []
-  (when-not @in-transition?
+  (if @in-transition?
+    (put! cancel-chan 1)
     (when-let [action (get slide-actions (inc (:slide @state)))]
       (save-slide-state!)
       (swap! state update-in [:slide] inc)
@@ -38,7 +40,8 @@
 (defn prev-slide!
   "Go to previous slide if we can."
   []
-  (when-not @in-transition?
+  (if @in-transition?
+    (put! cancel-chan 1)
     (when-let [s (get @slide-states (dec (:slide @state)))]
       (reset! state s))))
 

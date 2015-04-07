@@ -2,10 +2,18 @@
   (:require-macros
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
-    [cljs.core.async :refer [<! chan tap untap]]
+    [cljs.core.async :refer [<! chan tap untap mult]]
     [solar-system-of-js.tick :refer [tick-tap]]
     [solar-system-of-js.state :refer [state]]
     [solar-system-of-js.math :refer [PI cos]]))
+
+(def cancel-chan
+  "This channel receives a value whenever we wish to cancel all current animations."
+  (chan))
+
+(def cancel-tap
+  "Allows anything to tap the cancel animation channel."
+  (mult cancel-chan))
 
 (def tweens
   "In-betweening animation functions."
@@ -27,22 +35,27 @@
    Returns a channel that closes when done."
   [state-path {:keys [a b duration tween] :or {tween :swing} :as opts}]
   (let [tween (resolve-tween tween)
-        c (chan)
         resolve-var #(if (= % :_) (get-in @state state-path) %)
         a (resolve-var a)
-        dv (- b a)]
-    (tap tick-tap c)
+        dv (- b a)
+        
+        timer (chan)
+        canceler (chan)]
+
+    (tap cancel-tap canceler)
+    (tap tick-tap timer)
+
     (go-loop [t 0]
-      (let [dt (<! c)
+      (let [[dt c] (alts! [timer canceler])
+            dt (if (= timer c) dt duration) ;; skip ahead to end of animation
             t (+ t dt)
-            percent (-> (/ t duration)
-                        (min 1)
-                        (tween))
+            percent (-> (/ t duration) (min 1) (tween))
             v (+ a (* percent dv))]
         (swap! state assoc-in state-path v)
-        (when (< t duration)
-          (recur t)))
-      (untap tick-tap c))))
+        (when (and (= timer c) (< t duration))
+          (recur t))
+        (untap cancel-tap canceler)
+        (untap tick-tap timer)))))
 
 (defn multi-animate!
   "Helper for concurrent animations with `animate!`.
