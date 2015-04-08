@@ -2,6 +2,8 @@
 
 [![preview](preview.gif)](http://shaunlebron.github.io/solar-system-of-js/)
 
+[>> View Presentation](http://shaunlebron.github.io/solar-system-of-js/)
+
 An animated view of the current state of JavaScript platform languages.
 
 ## Implementation
