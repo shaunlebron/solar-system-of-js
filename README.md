@@ -27,16 +27,16 @@ language.
 
 ###### File Descriptions:
 
-- [`core.cljs`](src/solar-system-of-js/core.cljs)- entry point
-- [`actions.cljs`](src/solar-system-of-js/actions.cljs)- slide transition state actions
-- [`animate.cljs`](src/solar-system-of-js/animate.cljs)- animation utility (using core.async)
-- [`canvas.cljs`](src/solar-system-of-js/canvas.cljs)- canvas initialization and api wrapper
-- [`caption.cljs`](src/solar-system-of-js/caption.cljs)- caption setter in markdown
-- [`control.cljs`](src/solar-system-of-js/control.cljs)- touch/key controls
-- [`draw.cljs`](src/solar-system-of-js/draw.cljs)- all drawing functions
-- [`math.cljs`](src/solar-system-of-js/math.cljs)- math aliases
-- [`nav.cljs`](src/solar-system-of-js/nav.cljs)- slide navigation and routing
-- [`state.cljs`](src/solar-system-of-js/state.cljs)- state of the application
+- [`core.cljs`](src/solar_system_of_js/core.cljs)- entry point
+- [`actions.cljs`](src/solar_system_of_js/actions.cljs)- slide transition state actions
+- [`animate.cljs`](src/solar_system_of_js/animate.cljs)- animation utility (using core.async)
+- [`canvas.cljs`](src/solar_system_of_js/canvas.cljs)- canvas initialization and api wrapper
+- [`caption.cljs`](src/solar_system_of_js/caption.cljs)- caption setter in markdown
+- [`control.cljs`](src/solar_system_of_js/control.cljs)- touch/key controls
+- [`draw.cljs`](src/solar_system_of_js/draw.cljs)- all drawing functions
+- [`math.cljs`](src/solar_system_of_js/math.cljs)- math aliases
+- [`nav.cljs`](src/solar_system_of_js/nav.cljs)- slide navigation and routing
+- [`state.cljs`](src/solar_system_of_js/state.cljs)- state of the application
 
 ## Development Setup
 
