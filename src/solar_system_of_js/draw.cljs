@@ -50,7 +50,7 @@
   (fill-text! "Solar System of JS" x y)
 
   (fill-style! "#566")
-  (font! "100 40px Roboto")
+  (font! "300 40px Roboto")
   (fill-text! "Space City JS - 28 March 2015" x (+ 120 y))
 
   (restore!)
@@ -181,7 +181,7 @@
           (font! "100 40px Roboto")
           (fill-text! (:name layer) (+ 10 x1) y)
           (fill-style! "#AAA")
-          (font! "100 14px Roboto")
+          (font! "300 14px Roboto")
           (fill-text! (:desc layer) (+ 15 x1) (+ 30 y)))
 
         )
@@ -213,7 +213,7 @@
       (global-alpha! font-alpha)
       (text-baseline! "middle")
       (text-align! "center")
-      (font! "100 24px Roboto")
+      (font! "300 24px Roboto")
       (fill-style! "#222")
       (fill-style! (if highlight "#222" "#222"))
       (fill-text! caption 0 0))
@@ -254,7 +254,7 @@
     (global-alpha! alpha)
     (text-baseline! "middle")
     (text-align! "left")
-    (font! "100 100px Roboto")
+    (font! "300 100px Roboto")
     (fill-style! "#FFF")
     (fill-text! text 800 y)
     (restore!)))
@@ -318,7 +318,7 @@
 
     (save!)
     (global-alpha! (:alpha title))
-    (font! "100 90px Roboto")
+    (font! "300 90px Roboto")
     (text-baseline! "middle")
     (text-align! "center")
     (fill-style! "#677")
