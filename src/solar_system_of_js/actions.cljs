@@ -162,7 +162,7 @@
   (mapv normalize-action
   [;; title slide
    {:caption
-    (str "Hello, I'm [@shaunlebron](http://twitter.com/shaunlebron),"
+    (str "Hello, I'm [@shaunlebron](http://twitter.com/shaunlebron)"
          " and I made this for [#spacecityjs](http://spacecityjs.com/)"
          " to help us visualize the current state of the JS platform.")}
 

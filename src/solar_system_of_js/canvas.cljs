@@ -8,13 +8,24 @@
 (def width 1280)
 (def height 720)
 
+(defn resize-canvas-footer!
+  []
+  (let [w (aget canvas "offsetWidth")]
+    (.log js/console canvas (aget canvas "style") w)
+    (doto (.getElementById js/document "canvas-footer")
+        (aset "style" "width" (str w "px"))
+        (aset "style" "opacity" 1))))
+
 (defn init-canvas!
   []
   (set! canvas (.getElementById js/document "canvas"))
   (set! ctx    (.getContext canvas "2d"))
 
   (aset canvas "width" width)
-  (aset canvas "height" height))
+  (aset canvas "height" height)
+  
+  (resize-canvas-footer!)
+  (.addEventListener js/window "resize" resize-canvas-footer!))
 
 ;; wrapping Canvas2D functions for convenience
 

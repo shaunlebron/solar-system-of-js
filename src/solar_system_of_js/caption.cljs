@@ -3,19 +3,19 @@
     [solar-system-of-js.state :refer [state]]
     [markdown.core :refer [md->html]]))
 
-(def caption-element (.getElementById js/document "caption"))
-
 (defn set-caption!
   [caption]
-  (aset caption-element "style" "opacity" "1")
-  (let [html (md->html caption)]
-    (aset caption-element "innerHTML" html))
+  (let [el (.getElementById js/document "caption")]
 
-  ;; make all links open in new tab
-  (let [elements (.querySelectorAll caption-element "a")]
-    (dotimes [i (aget elements "length")]
-      (let [el (aget elements i)]
-        (.setAttribute el "target" "_blank")))))
+    (let [html (md->html caption)]
+      (aset el "style" "opacity" "1")
+      (aset el "innerHTML" html))
+
+    ;; make all links open in new tab
+    (let [elements (.querySelectorAll el "a")]
+      (dotimes [i (aget elements "length")]
+        (let [el (aget elements i)]
+          (.setAttribute el "target" "_blank"))))))
 
 (defn on-caption-change
   [_key _atom {old-caption :caption} {new-caption :caption}]
