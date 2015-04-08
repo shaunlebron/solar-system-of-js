@@ -1,9 +1,7 @@
 [![title](title.png)](http://shaunlebron.github.io/solar-system-of-js/)
 [![preview](preview.gif)](http://shaunlebron.github.io/solar-system-of-js/)
 
-__[>> View Presentation](http://shaunlebron.github.io/solar-system-of-js/)__
-
-#### What and Why?
+__[>> View the "Solar System of JS"](http://shaunlebron.github.io/solar-system-of-js/)__
 
 I made this to visualize the __current state of languages on the JS platform__,
 because I am frankly overwhelmed by all the different activity happening in
@@ -29,16 +27,16 @@ language.
 
 ###### File Descriptions:
 
-- `core.cljs` - entry point
-- `actions.cljs` - slide transition state actions
-- `animate.cljs` - animation utility (using core.async)
-- `canvas.cljs` - canvas initialization and api wrapper
-- `caption.cljs` - caption setter in markdown
-- `control.cljs` - touch/key controls
-- `draw.cljs` - all drawing functions
-- `math.cljs` - math aliases
-- `nav.cljs` - slide navigation and routing
-- `state.cljs` - state of the application
+- [`core.cljs`](src/solar-system-of-js/core.cljs)- entry point
+- [`actions.cljs`](src/solar-system-of-js/actions.cljs)- slide transition state actions
+- [`animate.cljs`](src/solar-system-of-js/animate.cljs)- animation utility (using core.async)
+- [`canvas.cljs`](src/solar-system-of-js/canvas.cljs)- canvas initialization and api wrapper
+- [`caption.cljs`](src/solar-system-of-js/caption.cljs)- caption setter in markdown
+- [`control.cljs`](src/solar-system-of-js/control.cljs)- touch/key controls
+- [`draw.cljs`](src/solar-system-of-js/draw.cljs)- all drawing functions
+- [`math.cljs`](src/solar-system-of-js/math.cljs)- math aliases
+- [`nav.cljs`](src/solar-system-of-js/nav.cljs)- slide navigation and routing
+- [`state.cljs`](src/solar-system-of-js/state.cljs)- state of the application
 
 ## Development Setup
 
