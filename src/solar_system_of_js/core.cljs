@@ -7,7 +7,8 @@
     [solar-system-of-js.control :refer [init-controls!]]
     [solar-system-of-js.tick :refer [tick!]]
     [solar-system-of-js.actions :refer [tick-orbits!
-                                        tick-radar!]]
+                                        tick-radar!
+                                        start-loops!]]
     [solar-system-of-js.nav :refer [init-first-slide! sync-slide-to-hash!]]
     [solar-system-of-js.tick :refer [tick-tap]]
     [solar-system-of-js.draw :refer [draw!]]
@@ -15,18 +16,6 @@
     ))
 
 (enable-console-print!)
-
-(defn start!
-  "Start the main loop."
-  []
-  (let [c (chan)]
-    (tap tick-tap c)
-    (go-loop []
-      (let [dt (<! c)]
-        (tick-orbits! dt)
-        (tick-radar! dt)
-        (draw!))
-      (recur))))
 
 (defn main
   []
@@ -40,13 +29,17 @@
   ;; start animation heartbeat
   (.requestAnimationFrame js/window tick!)
 
+  ;; do some state setup for the first slide
   (init-first-slide!)
 
   ;; go to slide listed in the url hash
   (sync-slide-to-hash!)
 
-  ;; start the main loop
-  (start!))
+  ;; start any animation loops
+  (start-loops!)
+
+  ;; start drawing (self-schedules after first draw)
+  (draw!))
 
 ;; start when ready
 (.addEventListener js/window "load" main)

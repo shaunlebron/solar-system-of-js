@@ -1,9 +1,10 @@
 (ns solar-system-of-js.actions
   (:require-macros
-    [cljs.core.async.macros :refer [go]])
+    [cljs.core.async.macros :refer [go go-loop]])
   (:require
-    [cljs.core.async :refer [<! timeout]]
+    [cljs.core.async :refer [<! timeout chan tap]]
     [solar-system-of-js.state :refer [state]]
+    [solar-system-of-js.tick :refer [tick-tap]]
     [solar-system-of-js.animate :refer [multi-animate!]]
     [solar-system-of-js.math :refer [PI]]))
 
@@ -398,3 +399,15 @@
   [dt]
   (when (:enable-orbits? @state)
     (swap! state update-in [:radar :offset] + (* dt 400))))
+
+(defn start-loops!
+  "These are looping animations that cannot be represented as slide transitions.
+  (Slide transitions have to end at some point.)"
+  []
+  (let [c (chan)]
+    (tap tick-tap c)
+    (go-loop []
+      (let [dt (<! c)]
+        (tick-orbits! dt)
+        (tick-radar! dt))
+      (recur))))

@@ -484,5 +484,8 @@
   (draw-clojurescript! (:clojurescript @state))
 
   (restore!)
-  (draw-progress!))
+  (draw-progress!)
+
+  ;; self-schedule the next frame to draw
+  (.requestAnimationFrame js/window draw!))
 
