@@ -12,7 +12,7 @@ a lot of the problems that are fragmenting JS.
 ## Implementation
 
 The code is written in <img
-src="http://shaunlebron.github.io/solar-system-of-js/cljs.svg" height="32px">
+src="http://shaunlebron.github.io/solar-system-of-js/cljs.svg" height="32px">\*
 ClojureScript. It implements its own animated presentation architecture that
 hopefully serves as an example for interesting things that can be done with the
 language.
@@ -38,6 +38,9 @@ language.
 - [`nav.cljs`](src/solar_system_of_js/nav.cljs)- slide navigation and routing
 - [`state.cljs`](src/solar_system_of_js/state.cljs)- state of the application
 
+_\* The [logo] is part of a branding effort for a proper ClojureScript
+website that we are building this year, with docs pages and tutorials._
+
 ## Development Setup
 
 1. Install [leiningen]
@@ -48,11 +51,6 @@ language.
     ```
 
 3. Open <http://localhost:3449>
-
-## ClojureScript has a logo?
-
-The [logo] is part of a branding effort for a proper ClojureScript
-website that we are building this year, with docs pages and tutorials.
 
 ## Contact
 
