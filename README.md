@@ -1,5 +1,4 @@
 [![title.png](title.png)](http://shaunlebron.github.io/solar-system-of-js/)
-
 [![preview](preview.gif)](http://shaunlebron.github.io/solar-system-of-js/)
 
 [>> View Presentation](http://shaunlebron.github.io/solar-system-of-js/)
