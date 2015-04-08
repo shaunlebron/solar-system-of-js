@@ -13,9 +13,13 @@ a lot of the problems that are fragmenting JS.
 
 ## Implementation
 
-The presentation is made with <img
+The code is written in <img
 src="http://shaunlebron.github.io/solar-system-of-js/cljs.svg" height="32px">
-ClojureScript, and its code demonstrates some of the following features:
+ClojureScript. It implements its own animated presentation architecture that
+hopefully serves as an example for interesting things that can be done with the
+language.
+
+###### Some features:
 
 - frames are drawn to a Canvas using the 2D api
 - all animations tap a `core.async` channel to receive a delta-time `dt` value every frame.
