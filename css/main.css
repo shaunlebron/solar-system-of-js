@@ -4,6 +4,7 @@
 body {
   background: #1a1a1a;
   margin: 0;
+  font: 16px "Open Sans", Helvetica, sans-serif;
 }
 
 body, html {
@@ -61,7 +62,6 @@ body, html {
   transition: opacity 1s;
   opacity: 0;
 
-  font: 16px "Open Sans", Helvetica, sans-serif;
   margin: 20px auto;
   padding: 20px 40px;
   max-width: 900px;
@@ -71,6 +71,36 @@ body, html {
   border-radius: 5px;
 }
 
+#canvas-footer {
+  position: relative;
+  height: 80px;
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+#keys {
+  color: #AAA;
+  position: absolute;
+  text-align: right;
+  display: block;
+  opacity: 0.2;
+  right: 10px;
+  top: 10px;
+  transition: opacity 1s;
+}
+
+#keys:hover {
+  opacity: 0.5;
+}
+
+#keys tr td:last-child {
+  text-align: left;
+}
+
+#caption p {
+  margin: 5px;
+}
+
 #caption a {
   color: #EEE;
   text-decoration: none;
@@ -78,13 +108,12 @@ body, html {
 }
 
 #github {
-  font: 16px "Open Sans", Helvetica, sans-serif;
-  margin: 0px auto;
-  padding: 20px 40px;
-  max-width: 900px;
+  padding: 20px;
   color: #444;
+  display: block;
+  width: 260px;
+  margin: 0 auto;
   text-align: center;
-  border-radius: 5px;
 }
 
 a {
