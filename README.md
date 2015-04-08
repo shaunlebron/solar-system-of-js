@@ -6,7 +6,7 @@
 
 ## Implementation
 
-The presentation is written in ClojureScript, visuals in Canvas2D api.
+The presentation is written in <img src="http://shaunlebron.github.io/solar-system-of-js/cljs.svg" height="32px"> ClojureScript, visuals in Canvas2D api.
 
 Each slide transition is driven by an [actions spec](https://github.com/shaunlebron/solar-system-of-js/blob/master/src/solar_system_of_js/actions.cljs#L160)
 to animate state data, which is then drawn by the [draw functions](https://github.com/shaunlebron/solar-system-of-js/blob/master/src/solar_system_of_js/draw.cljs#L443).
