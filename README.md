@@ -11,7 +11,7 @@ this space.  It was originally motivated by a desire to bring ClojureScript
 into this view, as a language that I think has simple, fundamental solutions to
 a lot of the problems that are fragmenting JS.
 
-#### Implementation
+## Implementation
 
 The presentation is made with <img
 src="http://shaunlebron.github.io/solar-system-of-js/cljs.svg" height="32px">
@@ -36,7 +36,7 @@ ClojureScript.  Some details:
 - `nav.cljs` - slide navigation and routing
 - `state.cljs` - state of the application
 
-#### Development Setup
+## Development Setup
 
 1. Install [leiningen]
 2. Run this to get a live-reload compiler, http server, and REPL:
@@ -47,23 +47,23 @@ ClojureScript.  Some details:
 
 3. Open <http://localhost:3449>
 
-#### ClojureScript has a logo?
+## ClojureScript has a logo?
 
 The [logo] is part of a branding effort for a proper ClojureScript
 website that we are building this year, with docs pages and tutorials.
 
-#### Contact
+## Contact
 
 - email: <shaun.e.williams@gmail.com>
 - twitter: [@shaunlebron](http://twitter.com/shaunlebron)
 
-#### License
+## License
 
 MIT
 
 ----
 
-![sketch](sketch.jpg)
+[![sketch](sketch.jpg)](https://raw.githubusercontent.com/shaunlebron/solar-system-of-js/master/sketch.jpg)
 
 [actions spec]:https://github.com/shaunlebron/solar-system-of-js/blob/master/src/solar_system_of_js/actions.cljs#L160
 [state data]:https://github.com/shaunlebron/solar-system-of-js/blob/master/src/solar_system_of_js/state.cljs#L5
