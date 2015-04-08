@@ -2,10 +2,44 @@
   (:require-macros
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
-    [cljs.core.async :refer [<! chan tap untap]]
-    [solar-system-of-js.tick :refer [tick-tap]]
+    [cljs.core.async :refer [put! <! chan tap untap mult]]
     [solar-system-of-js.state :refer [state]]
     [solar-system-of-js.math :refer [PI cos]]))
+
+;;----------------------------------------------------------------------
+;; Heartbeat
+;;----------------------------------------------------------------------
+
+(def tick-chan
+  "This channel receives dt (delta time from last frame) in milliseconds."
+  (chan))
+
+(def tick-tap
+  "Allows anything to tap the tick channel (e.g. for animation)."
+  (mult tick-chan))
+
+(def prev-time
+  "Timestamp of the last tick."
+  nil)
+
+(defn tick!
+  "Creates heartbeat by hooking requestAnimationFrame to tick-chan."
+  [curr-time]
+  (let [delta-ms (if prev-time
+                   (- curr-time prev-time)
+                   (/ 1000 60))
+        dt (/ delta-ms 1000)]
+    (set! prev-time curr-time)
+    (put! tick-chan dt))
+  (.requestAnimationFrame js/window tick!))
+
+(defn start-ticking!
+  []
+  (.requestAnimationFrame js/window tick!))
+
+;;----------------------------------------------------------------------
+;; Animation
+;;----------------------------------------------------------------------
 
 (def tweens
   "In-betweening animation functions."

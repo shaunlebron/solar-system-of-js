@@ -4,8 +4,7 @@
   (:require
     [cljs.core.async :refer [<! timeout chan tap]]
     [solar-system-of-js.state :refer [state]]
-    [solar-system-of-js.tick :refer [tick-tap]]
-    [solar-system-of-js.animate :refer [multi-animate!]]
+    [solar-system-of-js.animate :refer [tick-tap multi-animate!]]
     [solar-system-of-js.math :refer [PI]]))
 
 ;; When we change slides, there can be multiple actions to perform.

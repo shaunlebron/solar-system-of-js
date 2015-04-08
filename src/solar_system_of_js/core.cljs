@@ -7,12 +7,9 @@
     [cljs.core.async :refer [<! chan tap]]
     [solar-system-of-js.canvas :refer [init-canvas!]]
     [solar-system-of-js.control :refer [init-controls!]]
-    [solar-system-of-js.tick :refer [tick!]]
-    [solar-system-of-js.actions :refer [tick-orbits!
-                                        tick-radar!
-                                        start-loops!]]
+    [solar-system-of-js.actions :refer [start-loops!]]
     [solar-system-of-js.nav :refer [init-first-slide! sync-slide-to-hash!]]
-    [solar-system-of-js.tick :refer [tick-tap]]
+    [solar-system-of-js.animate :refer [start-ticking!]]
     [solar-system-of-js.draw :refer [draw!]]
     solar-system-of-js.caption
     ))
@@ -49,7 +46,7 @@
   (init-controls!)
 
   ;; start animation heartbeat
-  (.requestAnimationFrame js/window tick!)
+  (start-ticking!)
 
   ;; do some state setup for the first slide
   (init-first-slide!)
