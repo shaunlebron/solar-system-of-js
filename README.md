@@ -1,11 +1,17 @@
 [![title.png](title.png)](http://shaunlebron.github.io/solar-system-of-js/)
 [![preview](preview.gif)](http://shaunlebron.github.io/solar-system-of-js/)
 
-[>> View Presentation](http://shaunlebron.github.io/solar-system-of-js/)
+__[>> View Presentation](http://shaunlebron.github.io/solar-system-of-js/)__
 
-An animated view of the current state of JavaScript platform languages.
+###### What and Why?
 
-## Implementation
+I made this to visualize the __current state of languages on the JS platform__,
+because I am frankly overwhelmed by all the different activity happening in
+this space.  It was originally motivated by a desire to bring ClojureScript
+into this view, as a language that I think has simple, fundamental solutions to
+a lot of the problems that are fragmenting JS.
+
+###### Implementation
 
 The presentation is written in <img src="http://shaunlebron.github.io/solar-system-of-js/cljs.svg" height="32px"> ClojureScript, visuals in Canvas2D api.
 
@@ -25,7 +31,7 @@ to animate state data, which is then drawn by the [draw functions](https://githu
 - `state.cljs` - state of the application
 - `tick.cljs` - heartbeat of the application
 
-## Setup
+###### Setup
 
 ```
 lein figwheel dev
