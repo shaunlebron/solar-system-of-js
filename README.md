@@ -2,6 +2,8 @@
 
 [![preview](preview.gif)](http://shaunlebron.github.io/solar-system-of-js/)
 
+An animated view of the current state of JavaScript platform languages.
+
 ## Implementation
 
 The presentation is written in <img src="http://shaunlebron.github.io/solar-system-of-js/cljs.svg" height="32px"> ClojureScript, visuals in Canvas2D api.
