@@ -1,6 +1,4 @@
-# Solar System of JS
-
-[Visual presentation](http://shaunlebron.github.io/solar-system-of-js/) of the state of JavaScript development, as of March 2015...
+[![title.png](title.png)](http://shaunlebron.github.io/solar-system-of-js/)
 
 [![preview](preview.gif)](http://shaunlebron.github.io/solar-system-of-js/)
 
