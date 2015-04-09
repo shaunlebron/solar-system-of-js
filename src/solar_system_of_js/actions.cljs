@@ -254,7 +254,7 @@
 
    ;; show module sys
    {:caption
-    (str "And for proper dependency loading, we need extra module tools like"
+    (str "And for proper dependency loading, we must choose a module tool like"
          " [Browserify](http://browserify.org/),"
          " [webpack](http://webpack.github.io/),"
          " [SystemJS](https://github.com/systemjs/systemjs),"
