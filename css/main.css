@@ -86,7 +86,8 @@ body, html {
   opacity: 0.2;
   right: 10px;
   top: 10px;
-  transition: opacity 1s;
+  transition: opacity 0.2s;
+  cursor: default;
 }
 
 #keys:hover {
