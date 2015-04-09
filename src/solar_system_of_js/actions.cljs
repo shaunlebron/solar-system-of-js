@@ -207,7 +207,8 @@
     (str "ES7 is the next version which will include"
          " [Object.observe](http://www.html5rocks.com/en/tutorials/es7/observe/),"
          " [async](http://code.tutsplus.com/tutorials/a-primer-on-es7-async-functions--cms-22367),"
-         " and [comprehensions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Array_comprehensions).")
+         " [comprehensions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Array_comprehensions),"
+         " and [guards](http://wiki.ecmascript.org/doku.php?id=strawman:guards).")
     [:es-captions :es6 :alpha] 0
     [:es-captions :es7 :alpha] 1}
 
@@ -243,7 +244,7 @@
    ;; show linter
    {:caption
     (str "Also, to catch common JS language gotchas in our code, we rely on linters like"
-         " [JSHint](http://jshint.com/) or [ESLint](http://eslint.org/).")
+         " [JSHint](http://jshint.com/about/) or [ESLint](http://eslint.org/).")
 
     [:transpiler :highlight] false
     [:linter :highlight] true
