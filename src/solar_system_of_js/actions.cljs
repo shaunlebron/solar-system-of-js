@@ -163,7 +163,7 @@
    {:caption
     (str "Hello, I'm [@shaunlebron](http://twitter.com/shaunlebron)"
          " and I made this for [#spacecityjs](http://spacecityjs.com/)"
-         " to help us visualize the current state of the JS platform.")}
+         " to visualize the current state of languages on the JS platform.")}
 
    ;; slide in the JS logo
    {:caption
