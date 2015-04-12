@@ -71,7 +71,12 @@
                   }
    :radar {:orbit nil
            :offset 0}
-   })
+   :gwt {:alpha 0}
+   :objective-j {:alpha 0}
+   :scala {:alpha 0}
+   :elm {:alpha 0}
+   :js-of-ocaml {:alpha 0}
+   :other-langs {:alpha 0}})
 
 ;; Current state of the application.
 (defonce state

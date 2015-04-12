@@ -221,7 +221,7 @@
 
    ;; flash all layers and show transpiler
    {:caption
-    (str "But current/future JS features are not yet available."
+    (str "But current/future JS features are not yet available in Browsers."
          " [Babel](https://babeljs.io/) or [Traceur](https://github.com/google/traceur-compiler)"
          " help alleviate this by transpiling to ES5.")
     [:transpiler :highlight] true
@@ -374,8 +374,33 @@
     [:cam :x]               {:a :_ :b 300 :duration 1}
     [:cam :zoom]            {:a :_ :b 0.15 :duration 1}}
 
-   ;; TODO: read about elm
-   ;; TODO: read about purescript
+   ;; show other languages
+   [{:caption
+    "There are many other significant efforts to fix the shortcomings of and expand on JavaScript's foundation."
+    [:radar-orbit] nil
+    [:gwt :alpha] {:a :_ :b 1 :duration 0.2}}
+
+    {[:gwt :alpha] {:a :_ :b 0 :duration 0.1}
+     [:objective-j :alpha] {:a :_ :b 1 :duration 0.2}}
+
+    {[:objective-j :alpha] {:a :_ :b 0 :duration 0.1}
+     [:scala :alpha] {:a :_ :b 1 :duration 0.2}}
+
+    {[:scala :alpha] {:a :_ :b 0 :duration 0.1}
+     [:elm :alpha] {:a :_ :b 1 :duration 0.2}}
+
+    {[:elm :alpha] {:a :_ :b 0 :duration 0.1}
+     [:js-of-ocaml :alpha] {:a :_ :b 1 :duration 0.2}}
+
+    {[:js-of-ocaml :alpha] {:a :_ :b 0 :duration 0.1}
+     [:other-langs :alpha] {:a :_ :b 1 :duration 0.2}}
+
+    {[:other-langs :alpha] {:a :_ :b 0 :duration 0.1}}]
+
+   {:caption
+    (str "It's a large space, but I hope this helps. Thanks for reading!<br>"
+         " Code is on [github](http://github.com/shaunlebron/solar-system-of-js),"
+         " and I'm on [twitter](http://twitter.com/shaunlebron).")}
 
 ]))
 
