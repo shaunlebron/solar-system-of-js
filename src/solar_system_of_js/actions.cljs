@@ -156,6 +156,11 @@
 (def static-angle (/ (* 2 PI) static-num-arcs))
 (def static-low-alpha 0.2)
 
+(def other-high 1)
+(def other-low 0.4)
+(def other-high-delay 0.1)
+(def other-low-delay 0.1)
+
 (def slide-actions
   "Actions to take for each slide."
   (mapv normalize-action
@@ -376,31 +381,42 @@
 
    ;; show other languages
    [{:caption
-    "There are many other significant efforts to fix the shortcomings of and expand on JavaScript's foundation."
-    [:radar-orbit] nil
-    [:gwt :alpha] {:a :_ :b 1 :duration 0.2}}
+    "There are many other active & mature languages/tool suites that build upon JavaScript's foundation."
+    [:clojurescript :highlight] false
+    [:radar :orbit] nil
+    [:cam :zoom] {:a :_ :b 0.1 :duration 1}
+    [:cam :x] {:a :_ :b 500 :duration 1}
+    }
 
-    {[:gwt :alpha] {:a :_ :b 0 :duration 0.1}
-     [:objective-j :alpha] {:a :_ :b 1 :duration 0.2}}
+    {[:gwt :alpha] {:a :_ :b other-high :duration other-high-delay}}
 
-    {[:objective-j :alpha] {:a :_ :b 0 :duration 0.1}
-     [:scala :alpha] {:a :_ :b 1 :duration 0.2}}
+    {[:gwt :alpha] {:a :_ :b other-low :duration other-low-delay}
+     [:websharper :alpha] {:a :_ :b other-high :duration other-high-delay}}
 
-    {[:scala :alpha] {:a :_ :b 0 :duration 0.1}
-     [:elm :alpha] {:a :_ :b 1 :duration 0.2}}
+    {[:websharper :alpha] {:a :_ :b other-low :duration other-low-delay}
+     [:objective-j :alpha] {:a :_ :b other-high :duration other-high-delay}}
 
-    {[:elm :alpha] {:a :_ :b 0 :duration 0.1}
-     [:js-of-ocaml :alpha] {:a :_ :b 1 :duration 0.2}}
+    {[:objective-j :alpha] {:a :_ :b other-low :duration other-low-delay}
+     [:scala.js :alpha] {:a :_ :b other-high :duration other-high-delay}}
 
-    {[:js-of-ocaml :alpha] {:a :_ :b 0 :duration 0.1}
-     [:other-langs :alpha] {:a :_ :b 1 :duration 0.2}}
+    {[:scala.js :alpha] {:a :_ :b other-low :duration other-low-delay}
+     [:elm :alpha] {:a :_ :b other-high :duration other-high-delay}}
 
-    {[:other-langs :alpha] {:a :_ :b 0 :duration 0.1}}]
+    {[:elm :alpha] {:a :_ :b other-low :duration other-low-delay}
+     [:purescript :alpha] {:a :_ :b other-high :duration other-high-delay}}
+
+    {[:purescript :alpha] {:a :_ :b other-low :duration other-low-delay}
+     [:js_of_ocaml :alpha] {:a :_ :b other-high :duration other-high-delay}}
+
+    {[:js_of_ocaml :alpha] {:a :_ :b other-low :duration other-low-delay}
+     [:other-langs :alpha] {:a :_ :b other-high :duration other-high-delay}}
+
+    {[:other-langs :alpha] {:a :_ :b other-low :duration other-low-delay}}]
 
    {:caption
-    (str "It's a large space, but I hope this helps. Thanks for reading!<br>"
-         " Code is on [github](http://github.com/shaunlebron/solar-system-of-js),"
-         " and I'm on [twitter](http://twitter.com/shaunlebron).")}
+    (str "I hope that this has added some visual order to the overwhelming space of JS. Happy travels! 🚀")
+    [:cam :x] {:a :_ :b 0 :duration 2}
+    }
 
 ]))
 

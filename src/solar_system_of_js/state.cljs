@@ -59,23 +59,25 @@
           :size 100
           :highlight false
           :angle 0
-          :angle-speed (/ PI 15)
+          :angle-speed (/ PI 10)
           :r 1400
                   }
    :clojurescript {:alpha 0
                    :size 100
                    :highlight false
                    :angle 0
-                   :angle-speed (/ PI 10)
+                   :angle-speed (/ PI 15)
                    :r 2100
                   }
    :radar {:orbit nil
            :offset 0}
    :gwt {:alpha 0}
+   :websharper {:alpha 0}
    :objective-j {:alpha 0}
-   :scala {:alpha 0}
+   :scala.js {:alpha 0}
    :elm {:alpha 0}
-   :js-of-ocaml {:alpha 0}
+   :purescript {:alpha 0}
+   :js_of_ocaml {:alpha 0}
    :other-langs {:alpha 0}})
 
 ;; Current state of the application.

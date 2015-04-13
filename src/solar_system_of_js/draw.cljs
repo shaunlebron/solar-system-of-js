@@ -1,5 +1,6 @@
 (ns solar-system-of-js.draw
   (:require
+    [clojure.string :refer [upper-case]]
     [solar-system-of-js.state :refer [state]]
     [solar-system-of-js.nav :refer [num-slides]]
     [solar-system-of-js.canvas :refer [width height
@@ -425,9 +426,34 @@
       (font! "100 300px Roboto")
       (text-baseline! "middle")
       (text-align! "center")
-      (fill-style! "#DEE")
+      (fill-style! "#566")
       (fill-text! "CLOJURESCRIPT" 3800 0))
     (restore!)))
+
+(defn draw-other-langs!
+  [opts]
+  (save!)
+  (font! "100 500px Roboto")
+  (fill-style! "#DEE")
+  (let [names [:gwt
+               :websharper
+               :objective-j
+               :scala.js
+               :elm
+               :purescript
+               :js_of_ocaml]
+        rs (iterate (partial + 600) 2800)
+        ys (iterate (partial + 600) -1400)]
+    (doseq [[name- r y] (map vector names rs ys)]
+      (save!)
+      (let [obj (get opts name-)
+            alpha (:alpha obj)]
+        (global-alpha! alpha))
+      (draw-orbit! {:r r})
+      (fill-text! (upper-case (name name-)) 7000 y)
+      (println "r" r)
+      (restore!))
+  (restore!)))
 
 ;;--------------------------------------------------------------------------------
 ;; Drawing Dispatch
@@ -482,6 +508,8 @@
   (draw-coffeescript! (:coffeescript @state))
   (draw-dart! (:dart @state))
   (draw-clojurescript! (:clojurescript @state))
+
+  (draw-other-langs! @state)
 
   (restore!)
   (draw-progress!)
