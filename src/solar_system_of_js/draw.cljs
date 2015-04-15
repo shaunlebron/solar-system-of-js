@@ -451,7 +451,6 @@
         (global-alpha! alpha))
       (draw-orbit! {:r r})
       (fill-text! (upper-case (name name-)) 7000 y)
-      (println "r" r)
       (restore!))
   (restore!)))
 
