@@ -414,7 +414,8 @@
     {[:other-langs :alpha] {:a :_ :b other-low :duration other-low-delay}}]
 
    {:caption
-    (str "I hope that this has added some visual order to the overwhelming space of JS. Happy travels! 🚀")
+    (str "I hope that this has added some visual order to the overwhelming space of JS. Happy travels!"
+         " -- (((<i class='fa fa-space-shuttle'></i>")
     [:cam :x] {:a :_ :b 0 :duration 2}
     }
 
