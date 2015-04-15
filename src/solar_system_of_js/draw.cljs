@@ -482,37 +482,41 @@
     (stroke!))
   (restore!))
 
+(def prev-state nil)
+
 (defn draw!
   "Draw the current state of the application."
   []
-  (save!)
-  (fill-style! "#222")
-  (fill-rect! 0 0 width height)
-  (set-cam! (:cam @state))
+  (when (not= prev-state @state)
+    (set! prev-state @state)
+    (save!)
+    (fill-style! "#222")
+    (fill-rect! 0 0 width height)
+    (set-cam! (:cam @state))
 
-  (draw-title! (:title @state))
-  (draw-js-core! (:js-core @state))
-  (draw-es-captions! (:es-captions @state))
-  (draw-highlight-layer! (:highlight-layer @state))
+    (draw-title! (:title @state))
+    (draw-js-core! (:js-core @state))
+    (draw-es-captions! (:es-captions @state))
+    (draw-highlight-layer! (:highlight-layer @state))
 
-  (draw-transpiler! (:transpiler @state))
-  (draw-linter! (:linter @state))
-  (draw-modulesys! (:modulesys @state))
+    (draw-transpiler! (:transpiler @state))
+    (draw-linter! (:linter @state))
+    (draw-modulesys! (:modulesys @state))
 
-  (draw-static! (:static @state))
+    (draw-static! (:static @state))
 
-  (draw-radar! (:radar @state))
+    (draw-radar! (:radar @state))
 
-  (draw-js-face! (:js-face @state))
+    (draw-js-face! (:js-face @state))
 
-  (draw-coffeescript! (:coffeescript @state))
-  (draw-dart! (:dart @state))
-  (draw-clojurescript! (:clojurescript @state))
+    (draw-coffeescript! (:coffeescript @state))
+    (draw-dart! (:dart @state))
+    (draw-clojurescript! (:clojurescript @state))
 
-  (draw-other-langs! @state)
+    (draw-other-langs! @state)
 
-  (restore!)
-  (draw-progress!)
+    (restore!)
+    (draw-progress!))
 
   ;; self-schedule the next frame to draw
   (.requestAnimationFrame js/window draw!))
