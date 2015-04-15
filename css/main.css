@@ -108,6 +108,11 @@ body, html {
   border-bottom: 2px solid #666;
 }
 
+#caption i.fa {
+  font-size: 1.2em;
+  vertical-align: middle;
+}
+
 #github {
   padding: 20px;
   color: #444;
