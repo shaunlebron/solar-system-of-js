@@ -385,7 +385,7 @@
     [:clojurescript :highlight] false
     [:radar :orbit] nil
     [:cam :zoom] {:a :_ :b 0.1 :duration 1}
-    [:cam :x] {:a :_ :b 500 :duration 1}
+    [:cam :x] {:a :_ :b 600 :duration 1}
     }
 
     {[:gwt :alpha] {:a :_ :b other-high :duration other-high-delay}}
@@ -409,9 +409,9 @@
      [:js_of_ocaml :alpha] {:a :_ :b other-high :duration other-high-delay}}
 
     {[:js_of_ocaml :alpha] {:a :_ :b other-low :duration other-low-delay}
-     [:other-langs :alpha] {:a :_ :b other-high :duration other-high-delay}}
+     [:asm :alpha] {:a :_ :b other-high :duration other-high-delay}}
 
-    {[:other-langs :alpha] {:a :_ :b other-low :duration other-low-delay}}]
+    {[:asm :alpha] {:a :_ :b other-low :duration other-low-delay}}]
 
    {:caption
     (str "I hope that this has added some visual order to the overwhelming space of JS. Happy travels!"

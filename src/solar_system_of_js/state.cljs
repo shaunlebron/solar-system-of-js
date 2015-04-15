@@ -78,7 +78,7 @@
    :elm {:alpha 0}
    :purescript {:alpha 0}
    :js_of_ocaml {:alpha 0}
-   :other-langs {:alpha 0}})
+   :asm {:alpha 0}})
 
 ;; Current state of the application.
 (defonce state

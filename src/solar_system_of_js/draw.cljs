@@ -433,24 +433,25 @@
 (defn draw-other-langs!
   [opts]
   (save!)
-  (font! "100 500px Roboto")
+  (font! "100 400px Roboto")
   (fill-style! "#DEE")
-  (let [names [:gwt
-               :websharper
-               :objective-j
-               :scala.js
-               :elm
-               :purescript
-               :js_of_ocaml]
+  (let [names [[:gwt "GWT"]
+               [:websharper "WebSharper"]
+               [:objective-j "Objective-J"]
+               [:scala.js "Scala.js"]
+               [:elm "Elm"]
+               [:purescript "PureScript"]
+               [:js_of_ocaml "Js_of_ocaml"]
+               [:asm "Emscripten -> asm.js"]]
         rs (iterate (partial + 600) 2800)
-        ys (iterate (partial + 600) -1400)]
-    (doseq [[name- r y] (map vector names rs ys)]
+        ys (iterate (partial + 600) -1800)]
+    (doseq [[[name- text] r y] (map vector names rs ys)]
       (save!)
       (let [obj (get opts name-)
             alpha (:alpha obj)]
         (global-alpha! alpha))
       (draw-orbit! {:r r})
-      (fill-text! (upper-case (name name-)) 7000 y)
+      (fill-text! text 7600 y)
       (restore!))
   (restore!)))
 
