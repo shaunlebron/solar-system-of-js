@@ -1,10 +1,10 @@
 (ns solar-system-of-js.core
   (:require-macros
-    [cljs.core.async.macros :refer [go-loop]]
+    [cljs.core.async.macros :refer [go go-loop]]
     [hiccups.core :refer [html]])
   (:require
     hiccups.runtime
-    [cljs.core.async :refer [<! chan tap]]
+    [cljs.core.async :refer [<! chan tap close!]]
     [solar-system-of-js.canvas :refer [init-canvas!]]
     [solar-system-of-js.control :refer [init-controls!]]
     [solar-system-of-js.actions :refer [start-loops!]]
@@ -34,31 +34,40 @@
   (doto (.getElementById js/document "container")
     (aset "outerHTML" page)))
 
+(defn load-fonts!
+  [families]
+  (let [c (chan)]
+    (.load js/WebFont (clj->js {:google {:families families} :active #(close! c)}))
+    c))
+
 (defn main
   []
 
-  (init-page!)
+  (let [loading-fonts (load-fonts! ["Roboto:100,300,400,700" "Open Sans"])]
+    (init-page!)
 
-  ;; initialize drawing canvas
-  (init-canvas!)
+    ;; initialize drawing canvas
+    (init-canvas!)
 
-  ;; initialize touch and key controls
-  (init-controls!)
+    ;; initialize touch and key controls
+    (init-controls!)
 
-  ;; start animation heartbeat
-  (start-ticking!)
+    ;; start animation heartbeat
+    (start-ticking!)
 
-  ;; do some state setup for the first slide
-  (init-first-slide!)
+    ;; do some state setup for the first slide
+    (init-first-slide!)
 
-  ;; go to slide listed in the url hash
-  (sync-slide-to-hash!)
+    ;; go to slide listed in the url hash
+    (sync-slide-to-hash!)
 
-  ;; start any animation loops
-  (start-loops!)
+    ;; start any animation loops
+    (start-loops!)
 
-  ;; start drawing (self-schedules after first draw)
-  (draw!))
+    ;; wait until fonts have loaded to start drawing (self-schedules after first draw)
+    (go
+      (<! loading-fonts)
+      (draw!))))
 
 ;; start when ready
 (.addEventListener js/window "load" main)
