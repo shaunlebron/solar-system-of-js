@@ -233,18 +233,20 @@
   (draw-sign! opts "MODULE SYS" 2))
 
 (defn draw-static-arc!
-  [start-a stop-a color]
+  [start-a da r-percent color]
   (save!)
-  (let [r-out (-> @state :static :sphere :r)
-        r-in (-> @state :js-face :r)
-        dr (- r-out r-in)
-        r (+ r-in (/ dr 2))
-        thick (* 0.8 dr)]
-    (line-width! thick)
-    (stroke-style! color)
+
+  (let [max-r (- (-> @state :static :sphere :r) 24)
+        min-r (-> @state :js-face :r)
+        dr (- max-r min-r)
+        r (+ min-r (* r-percent dr))]
+
+    (fill-style! color)
     (begin-path!)
-    (arc! 0 0 r start-a stop-a false)
-    (stroke!)
+    (move-to! 0 0)
+    (arc! 0 0 r start-a (+ start-a da) false)
+    (close-path!)
+    (fill!)
     )
   (restore!))
 
@@ -278,7 +280,7 @@
 
 
 (defn draw-staticsphere!
-  [{:keys [angle alpha r]}]
+  [{:keys [arcs alpha r]}]
   (save!)
   (when-not (zero? alpha)
     (global-alpha! alpha)
@@ -286,29 +288,33 @@
     (fill-style! "#BCC")
     (fill!)
 
-    ;; draw the arc
-    (let [a (/ PI 2)
-          num-arcs 4
-          da (/ (* 2 PI) num-arcs)
-          start-a (+ a (* 2 da))]
+    (let [max-arcs 4
+          full-arcs (Math/floor arcs)
+          partial-arc (- arcs full-arcs)
+          top-a (/ PI -2)
+          da (/ (* 2 PI) max-arcs)
+          num-greyed-arcs (cond-> full-arcs
+                            (and (pos? full-arcs)
+                                 (zero? partial-arc)) dec)
+          ]
 
-      (draw-static-arc! start-a (+ start-a angle) "#FFF")
+      ;; draw full arcs
+      (doseq [i (range full-arcs)]
+        (let [color (if (< i num-greyed-arcs) "#CDD" "#FFF")]
+          (draw-static-arc! (+ top-a (* i da)) da 1 color)))
 
-      ;; hack to grey out previously visited arcs
-      (let [second-a (cond
-                       (> angle (* 3 da)) (* 3 da)
-                       (> angle (* 2 da)) (* 2 da)
-                       (> angle da) da)]
-        (draw-static-arc! start-a (+ start-a second-a) "#CDD"))
+      ;; draw partial arc
+      (when (pos? partial-arc)
+        (draw-static-arc! (+ top-a (* full-arcs da)) da partial-arc "#FFF"))
 
-      ;; draw dividers
       (when (= 1 alpha)
         (line-width! 24)
         (stroke-style! "#BCC")
         (let [r (-> @state :static :sphere :r)]
-          (dotimes [i num-arcs]
+          (dotimes [i max-arcs]
             (stroke-line! 0 0 0 r)
-            (rotate! da)))))
+            (rotate! da))))
+      )
     )
   (restore!))
 

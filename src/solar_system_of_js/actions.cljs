@@ -153,8 +153,8 @@
 
 ;; some constants
 (def static-num-arcs 4)
-(def static-angle (/ (* 2 PI) static-num-arcs))
 (def static-low-alpha 0.2)
+(def arc-speed 0.7)
 
 (def other-high 1)
 (def other-low 0.4)
@@ -309,7 +309,7 @@
          " extends ES6 with optional type annotation syntax and interfaces, and extra editor support.")
     [:cam :x]                    {:a :_ :b 300 :duration 1}
     [:static :typescript :alpha] {:a :_ :b 1 :duration 1}
-    [:static :sphere :angle]     {:a :_ :b static-angle :duration 1}}
+    [:static :sphere :arcs]      {:a :_ :b 1 :duration arc-speed}}
 
    ;; show flow
    {:caption
@@ -318,7 +318,7 @@
 
     [:static :typescript :alpha] static-low-alpha
     [:static :flow :alpha]   {:a :_ :b 1 :duration 1}
-    [:static :sphere :angle] {:a :_ :b (* 2 static-angle) :duration 1}}
+    [:static :sphere :arcs]  {:a :_ :b 2 :duration arc-speed}}
 
    ;; show closure
    {:caption
@@ -328,7 +328,7 @@
     [:static :flow :alpha] static-low-alpha
 
     [:static :closure :alpha] {:a :_ :b 1 :duration 1}
-    [:static :sphere :angle]  {:a :_ :b (* 3 static-angle) :duration 1}}
+    [:static :sphere :arcs]   {:a :_ :b 3 :duration arc-speed}}
 
    ;; show soundscript
    {:caption
@@ -336,7 +336,7 @@
          " a new \"use stricter+types\" mode for VM-level optimizations.")
     [:static :closure :alpha] static-low-alpha
     [:static :soundscript :alpha] {:a :_ :b 1 :duration 1}
-    [:static :sphere :angle]      {:a :_ :b (* 4 static-angle) :duration 1}}
+    [:static :sphere :arcs]       {:a :_ :b 4 :duration arc-speed}}
 
    ;; fade out staticsphere details
    {:caption
@@ -346,7 +346,7 @@
     [:static :closure :alpha]     {:a :_ :b 0 :duration 1}
     [:static :soundscript :alpha] {:a static-low-alpha :b 0 :duration 1}
     [:cam :x]                     {:a :_ :b 0 :duration 1}
-    [:static :sphere :angle]      {:a :_ :b 0 :duration 1}
+    [:static :sphere :arcs]       {:a :_ :b 0 :duration arc-speed}
     [:static :title :alpha]       {:a :_ :b 0 :duration 1}
     [:cam :zoom]                  {:a :_ :b 0.2 :duration 2}}
 

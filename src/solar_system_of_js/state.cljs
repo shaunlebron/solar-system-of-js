@@ -43,7 +43,7 @@
    :static {:title {:alpha 0}
             :sphere {:alpha 0
                      :r 200
-                     :angle 0}
+                     :arcs 0}
             :typescript {:alpha 0}
             :soundscript {:alpha 0}
             :closure {:alpha 0}
